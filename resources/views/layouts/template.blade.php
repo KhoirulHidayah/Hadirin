@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config('app.name', 'Hadirin') }}</title>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{{ asset('adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
+
+  @stack('css')
+</head>
+<body class="hold-transition sidebar-mini layout-fixed"> {{-- layout-fixed agar sidebar sticky --}}
+<div class="wrapper">
+
+  {{-- Header --}}
+  @include('layouts.header')
+
+  {{-- SIDEBAR --}}
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="{{ url('/') }}" class="brand-link custom-brand">
+      <img src="{{ asset('adminlte/dist/img/pln.png') }}" alt="Logo PLN" class="brand-image">
+      <span class="brand-text">Hadirin</span>
+    </a>
+    @include('layouts.sidebar')
+  </aside>
+
+  {{-- MAIN AREA --}}
+  <div class="content-wrapper">
+    @include('layouts.breadcrumb')
+
+    <section class="container-fluid">
+      @yield('content')
+    </section>
+  </div>
+
+  {{-- FOOTER --}}
+  @include('layouts.footer')
+</div>
+
+<!-- Scripts -->
+<script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/jszip/jszip.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colvis.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/jquery-validation/additional-methods.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ asset('adminlte/dist/js/adminlte.min.js') }}"></script>
+
+<script>
+  $.ajaxSetup({
+    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+  });
+</script>
+
+@stack('js')
+
+</body>
+</html>

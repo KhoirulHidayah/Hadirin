@@ -1,0 +1,74 @@
+/* FULL HEIGHT FIX FOR SIDEBAR + CONTENT */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh !important;
+    z-index: 1030;
+    overflow-y: auto;
+}
+
+/* Content geser kanan agar tidak tertimpa sidebar */
+.content-wrapper {
+    margin-left: 250px; /* default width AdminLTE sidebar */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6f9;
+}
+
+.content {
+    flex: 1;
+    padding-bottom: 20px;
+}
+
+/* FOOTER FIX */
+.main-footer {
+    border-top: 1px solid #dee2e6;
+    background: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+/* RESPONSIVE (opsional) */
+@media (max-width: 768px) {
+    .main-sidebar {
+        position: relative;
+        height: auto !important;
+    }
+    .content-wrapper {
+        margin-left: 0;
+    }
+}
+
+.custom-brand {
+  background: linear-gradient(to bottom, #00a0e3, #007acc);
+  color: white;
+  padding-left: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.custom-brand .brand-image {
+  width: 35px;
+  height: 35px;
+  opacity: 0.9;
+  margin-right: 10px;
+}
+
+.custom-brand .brand-text {
+  font-size: 1.1rem;
+  font-weight: bold;       /* Membuat teks bold */
+}
