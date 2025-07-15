@@ -2,14 +2,11 @@
 
 @section('content')
 <div class="card card-outline card-primary">
-    <div class="card-header">
-        <h3 class="card-title">Edit Kegiatan</h3>
-    </div>
-    <div class="card-body">
+    <div class="card-body small-form">
         @empty($Presence)
             <div class="alert alert-danger alert-dismissible">
                 <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
-                Daftar jenis kegiatan yang Anda cari tidak ditemukan.
+                Daftar kegiatan yang Anda cari tidak ditemukan.
             </div>
             <a href="{{ url('presence') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
         @else
@@ -18,17 +15,17 @@
                 @method('PUT')
 
                 <div class="form-group row">
-                    <label class="col-2 control-label col-form-label">ID Kegiatan</label>
+                    <label class="col-2 col-form-label">ID Kegiatan</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" name="presence_id"
+                        <input type="text" class="form-control form-control-sm" name="presence_id"
                             value="{{ old('presence_id', $Presence->presence_id) }}" readonly>
                     </div>
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-2 control-label col-form-label">Nama Kegiatan</label>
+                    <label class="col-2 col-form-label">Nama Kegiatan</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" name="nama_kegiatan"
+                        <input type="text" class="form-control form-control-sm" name="nama_kegiatan"
                             value="{{ old('nama_kegiatan', $Presence->nama_kegiatan) }}" required>
                         @error('nama_kegiatan')
                             <small class="form-text text-danger">{{ $message }}</small>
@@ -37,9 +34,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-2 control-label col-form-label">Tempat</label>
+                    <label class="col-2 col-form-label">Tempat</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" name="tempat"
+                        <input type="text" class="form-control form-control-sm" name="tempat"
                             value="{{ old('tempat', $Presence->tempat) }}" required>
                         @error('tempat')
                             <small class="form-text text-danger">{{ $message }}</small>
@@ -48,9 +45,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-2 control-label col-form-label">Tanggal Kegiatan</label>
+                    <label class="col-2 col-form-label">Tanggal Kegiatan</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" name="tgl_kegiatan"
+                        <input type="text" class="form-control form-control-sm" name="tgl_kegiatan"
                             value="{{ old('tgl_kegiatan', date('Y-m-d', strtotime($Presence->tgl_kegiatan))) }}"
                             placeholder="Format: YYYY-MM-DD" required>
                         @error('tgl_kegiatan')
@@ -60,9 +57,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-2 control-label col-form-label">Waktu Mulai</label>
+                    <label class="col-2 col-form-label">Waktu Mulai</label>
                     <div class="col-10">
-                        <input type="text" class="form-control" name="waktu_mulai"
+                        <input type="text" class="form-control form-control-sm" name="waktu_mulai"
                             value="{{ old('waktu_mulai', date('H:i', strtotime($Presence->tgl_kegiatan))) }}"
                             placeholder="Format: HH:mm" required>
                         @error('waktu_mulai')
@@ -71,14 +68,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label class="col-2 control-label col-form-label"></label>
-                    <div class="col-10">
+                <div class="form-group row mt-3">
+                    <div class="col-10 offset-2">
                         <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                        <!-- Tombol Kembali -->
-                        <a href="{{ url('presence') }}" class="btn btn-sm btn-secondary">
-                            Kembali
-                        </a>
+                        <a href="{{ url('presence') }}" class="btn btn-sm btn-secondary">Kembali</a>
                     </div>
                 </div>
             </form>
@@ -90,6 +83,16 @@
 @push('css')
 <!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .small-form {
+        font-size: 0.875rem; /* font-size 14px */
+    }
+
+    .form-control-sm {
+        padding: 0.25rem 0.5rem;
+        height: calc(1.5em + 0.5rem + 2px);
+    }
+</style>
 @endpush
 
 @push('js')

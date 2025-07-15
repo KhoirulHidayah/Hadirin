@@ -28,6 +28,8 @@
         .nav-link {
             color: #ffffff !important;
             font-weight: 500;
+            font-size: 13px;
+            padding: 6px 12px;
         }
 
         .nav-link.active {
@@ -41,20 +43,26 @@
             color: #ffffff !important;
         }
 
-        .nav-header {
-            color: white;
-            padding: 10px;
-            font-weight: bold;
+        .nav-icon {
+            font-size: 13px !important;
         }
 
+        .nav-header {
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .nav-item {
+            font-size: 13px;
+        }
     </style>
 </head>
-<body class="sidebar-mini sidebar-collapse"> <!-- Tambahkan class ini untuk testing collapsed -->
+<body class="sidebar-mini sidebar-collapse">
 
 <!-- Sidebar -->
 <div class="sidebar">
-
-    <!-- Sidebar Menu -->
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 

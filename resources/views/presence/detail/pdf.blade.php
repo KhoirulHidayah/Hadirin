@@ -8,147 +8,195 @@
             font-family: Arial, sans-serif;
             font-size: 12px;
         }
+
+        .page-wrapper {
+            border: 1px solid #000; /* Garis tepi tipis */
+            padding: 10px;          /* Jarak isi ke tepi */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        .logo {
-            width: 60px;
-        }
-        .header-wrapper {
+
+        .kop-wrapper {
             border: 1px solid #000;
-            padding: 5px;
         }
-        .header-title {
+
+        .kop-logo {
+            width: 50px;
+            height: auto;
+        }
+
+        .kop-title {
             text-align: center;
             font-weight: bold;
             font-size: 14px;
-            padding: 4px 0;
         }
-        .doc-info {
-            font-size: 11px;
-            border: 1px solid black;
-        }
-        .doc-info td {
-            border: 1px solid black;
-            padding: 2px 5px;
-        }
-        .meeting-info {
-            margin-top: 10px;
+
+        .kop-subtitle {
+            text-align: center;
             font-size: 12px;
         }
-        .meeting-info td {
-            padding: 4px;
+
+        .doc-info {
+            border: 1px solid #000;
+            font-size: 11px;
         }
-        .meeting-info .label {
-            width: 120px;
+
+        .doc-info td {
+            border: 1px solid #000;
+            padding: 2px 6px;
+        }
+
+        .kop-header td {
+            vertical-align: top;
+        }
+
+        .header-title-row td {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
             font-weight: bold;
+            text-align: center;
+            font-size: 14px;
+            padding: 6px;
         }
-        .table-bordered th, .table-bordered td {
+
+        .table-bordered th,
+        .table-bordered td {
             border: 1px solid black;
             padding: 4px;
+        }
+
+        .meeting-info {
+            margin: 10px 0;
+        }
+
+        .meeting-info td:nth-child(2) {
+            padding-left: 4px;
+        }
+
+        .label {
+            width: 120px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
-    <div class="header-wrapper">
-        <table>
+    <div class="page-wrapper">
+        <table class="kop-wrapper" style="width: 100%; border-collapse: collapse;">
+            <!-- Baris 1: KOP -->
+            <tr style="border-bottom: 1px solid black;">
+                <!-- Logo PLN -->
+                <td width="15%" style="text-align: center; vertical-align: middle; padding: 5px;">
+                <img src="{{ public_path('images/logo_pln.png') }}" style="width: 60px;"><br>
+                </td>
+                <!-- Judul Tengah -->
+                <td width="70%" style="text-align: left; vertical-align: middle; padding: 0px;">
+                <div style="font-weight: bold; font-size: 15px; line-height: 1.2; margin: 2px 0;">PT PLN (PERSERO)</div>
+                <div style="font-weight: bold; font-size: 15px; line-height: 1.2; margin: 2px 0;">UNIT INDUK TRANSMISI JAWA BAGIAN TIMUR DAN BALI</div>
+                </td>
+                <!-- Logo SMK3 dan ISO -->
+                <td width="25%" style="text-align: center; vertical-align: middle; padding: 5px;">
+                <img src="{{ public_path('images/logo_smk3.jpg') }}" style="width: 45px; margin-top: 24px;">
+                <img src="{{ public_path('images/logo_iso.png') }}" style="width: 60px; margin-top: 16px;">
+                </td>
+            </tr>
+            <!-- Baris 2: Judul Formulir + Info Dokumen -->
             <tr>
-                <td width="15%">
-                    <img src="{{ public_path('logo_pln.png') }}" class="logo" alt="Logo PLN">
+                <!-- Kolom kiri: Judul Formulir (gabung 2 kolom) -->
+                <td colspan="2" style="
+                    border: 1px solid #000;
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 20px;
+                    vertical-align: middle;
+                    padding: 4px;
+                ">
+                    FORMULIR DAFTAR HADIR RAPAT
                 </td>
-                <td width="60%" style="text-align: center;">
-                    <div style="font-weight: bold;">PT PLN (PERSERO)</div>
-                    <div>UNIT INDUK TRANSMISI JAWA BAGIAN TIMUR DAN BALI</div>
-                    <br>
-                    <div class="header-title">FORMULIR DAFTAR HADIR RAPAT</div>
-                </td>
-                <td width="25%">
-                    <table class="doc-info">
+
+                <!-- Kolom kanan: Info Dokumen -->
+                <td style="border: 1px solid #000; padding: 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
                         <tr>
-                            <td>No. Dokumen</td>
-                            <td>FK3.TJBTB.01.00.02</td>
+                            <td style="border: 1px solid #000; padding: 1px; width: 40%;">No. Dokumen</td>
+                            <td style="border: 1px solid #000; padding: 1px; width: 60%;">FK3.TJBTB.01.00.02</td>
                         </tr>
                         <tr>
-                            <td>Edisi / Revisi</td>
-                            <td>00 / 00</td>
+                            <td style="border: 1px solid #000; padding: 1px;">Edisi / Revisi</td>
+                            <td style="border: 1px solid #000; padding: 1px;">00 / 00</td>
                         </tr>
                         <tr>
-                            <td>Berlaku Efektif</td>
-                            <td>01 JANUARI 2019</td>
+                            <td style="border: 1px solid #000; padding: 1px;">BerlakuEfektif</td>
+                            <td style="border: 1px solid #000; padding: 1px;">01 JANUARI 2019</td>
                         </tr>
                         <tr>
-                            <td>Halaman</td>
-                            <td>1 dari 4</td>
+                            <td style="border: 1px solid #000; padding: 1px;">Halaman</td>
+                            <td style="border: 1px solid #000; padding: 1px;"></td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
-    </div>
 
-    <br>
-
-    <table class="meeting-info">
-        <tr>
-            <td class="label">Hari / Tanggal</td>
-            <td>:</td>
-            <td>{{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->translatedFormat('l, d F Y') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Waktu</td>
-            <td>:</td>
-            <td>{{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->format('H:i') }}</td>
-        </tr>
-        <tr>
-            <td class="label">Tempat</td>
-            <td>:</td>
-            <td>{{ $Presence->tempat ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Jenis Rapat</td>
-            <td>:</td>
-            <td>{{ $Presence->nama_kegiatan ?? '-' }}</td>
-        </tr>
-    </table>
-
-    <br>
-
-    <table class="table-bordered">
-        <thead>
+        <!-- Informasi Rapat -->
+        <br>
+        <table class="meeting-info">
             <tr>
-                <th>No.</th>
-                <th>Nama</th>
-                <th>NIP</th>
-                <th>Jabatan/Bidang</th>
-                <th>Email</th>
-                <th>No. HP</th>
-                <th>Unit/Instansi</th>
-                <th>Tanda Tangan</th>
+                <td class="label">Hari / Tanggal</td>
+                <td>: {{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->translatedFormat('l, d F Y') }}</td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($presence_details as $index => $presence_details)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $presence_details->nama }}</td>
-                    <td>{{ $presence_details->nip }}</td>
-                    <td>{{ $presence_details->jabatan }}</td>
-                    <td>{{ $presence_details->email }}</td>
-                    <td>{{ $presence_details->no_hp }}</td>
-                    <td>{{ $presence_details->asal_instansi }}</td>
-                    <td>
-                        @if($presence_details->tanda_tangan)
-                            <img src="{{ public_path('storage/tanda_tangan/' . $presence_details->tanda_tangan) }}" width="80">
-                        @else
-                            Tidak Ada
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+            <tr>
+                <td class="label">Waktu</td>
+                <td>: {{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->format('H:i') }}</td>
+            </tr>
+            <tr>
+                <td class="label">Tempat</td>
+                <td>: {{ $Presence->tempat ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="label">Jenis Rapat</td>
+                <td>: {{ $Presence->nama_kegiatan ?? '-' }}</td>
+            </tr>
+        </table>
 
+        <!-- Tabel Daftar Hadir -->
+        <br>
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Nama</th>
+                    <th>NIP</th>
+                    <th>Jabatan/Bidang</th>
+                    <th>Email</th>
+                    <th>No. HP</th>
+                    <th>Unit/Instansi</th>
+                    <th>Tanda Tangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($presence_details as $index => $presence)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $presence->nama }}</td>
+                        <td>{{ $presence->nip }}</td>
+                        <td>{{ $presence->jabatan }}</td>
+                        <td>{{ $presence->email }}</td>
+                        <td>{{ $presence->no_hp }}</td>
+                        <td>{{ $presence->asal_instansi }}</td>
+                        <td>
+                            @if($presence->tanda_tangan)
+                                <img src="{{ public_path('storage/tanda_tangan/' . $presence->tanda_tangan) }}" width="80">
+                            @else
+                                Tidak Ada
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

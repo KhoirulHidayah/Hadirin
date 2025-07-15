@@ -19,7 +19,7 @@ class PresenceController extends Controller
             'list'  => ['Home', 'Daftar Kegiatan']
         ];
         $page = (object) [
-            'title' => ''
+            'title' => 'Daftar Kegiatan'
         ];
         $presences = Presence::all();
         $activeMenu = 'presence';

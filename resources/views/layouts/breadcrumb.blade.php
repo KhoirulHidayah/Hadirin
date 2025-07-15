@@ -2,21 +2,28 @@
     .content-header h1 {
         color: #00a0e3;
         font-weight: bold;
+        font-size: 20px; /* Ukuran font lebih kecil */
+        margin-bottom: 0;
+    }
+
+    .breadcrumb {
+        font-size: 13px; /* Ukuran breadcrumb lebih kecil */
+        margin-bottom: 0;
     }
 
     .breadcrumb .breadcrumb-item {
-        color: #6c757d; /* warna default breadcrumb */
+        color: #6c757d;
     }
 
     .breadcrumb .breadcrumb-item.active {
-        color: #ff4d4d !important; /* merah untuk active menu */
+        color: #ff4d4d !important;
         font-weight: bold;
     }
 </style>
 
 <section class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2">
+        <div class="row mb-2 align-items-center">
             <div class="col-sm-6">
                 <h1>{{ $breadcrumb->title }}</h1>
             </div>

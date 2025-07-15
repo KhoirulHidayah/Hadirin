@@ -2,22 +2,22 @@
 
 @section('content')
 <div class="card card-outline card-primary">
-    <div class="card-header">
-        <h3 class="card-title">{{ $page->title }}</h3>
-        <div class="card-tools">
+
+    <div class="card-body">
+        <div class="text-right mb-3">
             <button type="button" onclick="copyLink()" class="btn btn-warning btn-sm">
                 <i class="fas fa-link"></i> Copy Link
             </button>
             <a href="{{ route('presence_details.export.pdf', ['id' => $Presence->presence_id]) }}" class="btn btn-danger btn-sm">
-                <i class="fas fa-file-pdf"></i> Export to PDF
+                <i class="fas fa-file-pdf"></i> Export PDF
             </a>
-            <a href="{{ url('presence') }}" class="btn btn-sm btn-secondary">
+            <a href="{{ route('presence_details.export.excel', ['id' => $Presence->presence_id]) }}" class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>           
+            <a href="{{ url('presence') }}" class="btn btn-secondary btn-sm">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
         </div>
-    </div>
-
-    <div class="card-body">
         <table class="table table-borderless">
             <tr>
                 <td width="150">Nama Kegiatan</td>
@@ -201,11 +201,10 @@
         font-size: 12px;
     }
 
-    .btn-sm-custom {
-        padding: 2px 6px;
-        font-size: 11px;
-        line-height: 1;
-        border-radius: 3px;
+    .btn-sm {
+        padding: 0.25rem 0.5rem; 
+        font-size: 0.875rem; 
+        border-radius: 0.2rem;
     }
 
     table#presences img {

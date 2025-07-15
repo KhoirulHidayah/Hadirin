@@ -39,6 +39,7 @@ Route::prefix('presence_details')->group(function () {
     Route::get('/{id}', [PresenceDetailController::class, 'show'])->name('presence.show');
     Route::get('/export/pdf/{id}', [PresenceDetailController::class, 'export_pdf'])->name('presence_details.export.pdf');
     Route::delete('/{id}', [PresenceDetailController::class, 'destroy'])->name('presence_details.destroy');
+    Route::get('/export/excel/{id}', [PresenceDetailController::class, 'export_excel'])->name('presence_details.export.excel');
 });
 
 Route::prefix('pegawai')->group(function () {
@@ -50,6 +51,8 @@ Route::prefix('pegawai')->group(function () {
     Route::get('/{id}/edit', [PegawaiController::class, 'edit']);    
     Route::put('/{id}', [PegawaiController::class, 'update']);      
     Route::delete('/{id}', [PegawaiController::class, 'destroy']);
+    Route::post('/import', [PegawaiController::class, 'import']);
+    Route::get('/template/download', [PegawaiController::class, 'downloadTemplate'])->name('pegawai.template');
 });
 
 

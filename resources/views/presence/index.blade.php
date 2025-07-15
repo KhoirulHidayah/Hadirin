@@ -4,9 +4,9 @@
 <div class="card card-outline card-primary">
     <div class="card-body">
         <div class="text-right mb-3">
-            <a class="btn btn-primary" href="{{ url('presence/create') }}">
-                <i class="fas fa-plus"></i> Tambah Kegiatan
-            </a>
+             <a class="btn btn-primary btn-sm" href="{{ url('presence/create') }}">
+                    <i class="fas fa-plus"></i> Tambah Pegawai
+            </a> 
         </div>
 
         @if (session('success'))
@@ -16,20 +16,22 @@
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
-        <table class="table table-bordered table-striped table-hover table-sm" id="presences">
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>Kode Kegiatan</th>
-                    <th>Nama Kegiatan</th>
-                    <th>Tempat</th>
-                    <th>Slug</th>
-                    <th>Tanggal Kegiatan</th>
-                    <th>Waktu Mulai</th>
-                    <th>Opsi</th>
-                </tr>
-            </thead>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover table-sm" id="presences">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Kode Kegiatan</th>
+                        <th>Nama Kegiatan</th>
+                        <th>Tempat</th>
+                        <th>Slug</th>
+                        <th>Tanggal Kegiatan</th>
+                        <th>Waktu Mulai</th>
+                        <th>Opsi</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -73,6 +75,7 @@
         border-radius: 3px;
         margin: 1px;
     }
+
 </style>
 @endpush
 
