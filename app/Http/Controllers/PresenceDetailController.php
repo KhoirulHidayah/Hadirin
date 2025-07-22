@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -24,6 +25,9 @@ class PresenceDetailController extends Controller
 
         return datatables()->of($data)
             ->addIndexColumn()
+            ->editColumn('waktu_absen', function ($row) {
+                return $row->waktu_absen ? Carbon::parse($row->waktu_absen)->format('d-m-Y H:i:s') : '-';
+            })
             ->make(true);
     }
 
@@ -48,6 +52,7 @@ class PresenceDetailController extends Controller
 
         \App\Models\PresenceDetail::create([
             'presence_id' => $request->presence_id,
+            'waktu_absen' => now(),
             'nama' => $request->nama,
             'nip' => $request->nip,
             'email' => $request->email,
@@ -132,7 +137,7 @@ public function export_excel($id)
     foreach ($presence_details as $detail) {
         $sheet->setCellValue('A' . $row, $no);
         $sheet->setCellValue('B' . $row, $detail->nama);
-        $sheet->setCellValue('C' . $row, $detail->nip);
+        $sheet->setCellValueExplicit('C' . $row, $detail->nip, DataType::TYPE_STRING);
         $sheet->setCellValue('D' . $row, $detail->email);
         $sheet->setCellValue('E' . $row, $detail->jabatan);
         $sheet->setCellValue('F' . $row, $detail->no_hp);

@@ -9,6 +9,7 @@ use App\Imports\SimpleCustomerImporter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Response;
@@ -201,7 +202,6 @@ public function import(Request $request)
     }
 }
 
-
 public function downloadTemplate()
 {
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -214,7 +214,16 @@ public function downloadTemplate()
     foreach ($headers as $index => $header) {
         $col = chr(65 + $index); // A, B, C, ...
         $sheet->setCellValue($col . '1', $header);
-        $sheet->setCellValue($col . '2', $data[$index]);
+
+        if ($header == 'nip') {
+            // Set value sebagai string
+            $sheet->setCellValueExplicit($col . '2', $data[$index], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+
+            // Format kolom sebagai teks juga untuk mencegah Excel otomatis ubah jadi angka
+            $sheet->getStyle($col . '2')->getNumberFormat()->setFormatCode('@');
+        } else {
+            $sheet->setCellValue($col . '2', $data[$index]);
+        }
 
         // Set border untuk header dan contoh data
         $sheet->getStyle($col . '1:' . $col . '2')
@@ -239,4 +248,14 @@ public function downloadTemplate()
     return response()->download($tempPath)->deleteFileAfterSend(true);
 }
 
+public function search(Request $request)
+{
+    $query = $request->q;
+    $pegawai = Pegawai::where('asal_instansi', 'LIKE', '%PLN%')
+                      ->where('nama', 'LIKE', '%' . $query . '%')
+                      ->limit(10)
+                      ->get();
+
+    return response()->json($pegawai);
+}
 }

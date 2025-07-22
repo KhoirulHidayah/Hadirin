@@ -10,7 +10,7 @@
         }
 
         .page-wrapper {
-            border: 1px solid #000; /* Garis tepi tipis */
+            border: 1px solid #0000007c; /* Garis tepi tipis */
             padding: 10px;          /* Jarak isi ke tepi */
         }
 
@@ -80,6 +80,28 @@
             width: 120px;
             font-weight: bold;
         }
+
+        .table-bordered {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid black;
+    padding: 4px;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.table-bordered td img {
+    max-width: 70px;   /* dibatasi */
+    height: auto;
+    display: block;
+    margin: auto;
+}
+
     </style>
 </head>
 <body>
@@ -166,34 +188,34 @@
         <table class="table-bordered">
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Nama</th>
-                    <th>NIP</th>
-                    <th>Jabatan/Bidang</th>
-                    <th>Email</th>
-                    <th>No. HP</th>
-                    <th>Unit/Instansi</th>
-                    <th>Tanda Tangan</th>
+                    <th style="width: 5%;">No.</th>
+                    <th style="width: 9%;">Nama</th>
+                    <th style="width: 20%;">NIP</th>
+                    <th style="width: 15%;">Jabatan/Bidang</th>
+                    <th style="width: 13%;">Email</th>
+                    <th style="width: 14%;">No. HP</th>
+                    <th style="width: 13%;">Unit/Instansi</th>
+                    <th style="width: 11%;">Tanda Tangan</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($presence_details as $index => $presence)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $presence->nama }}</td>
-                        <td>{{ $presence->nip }}</td>
-                        <td>{{ $presence->jabatan }}</td>
-                        <td>{{ $presence->email }}</td>
-                        <td>{{ $presence->no_hp }}</td>
-                        <td>{{ $presence->asal_instansi }}</td>
-                        <td>
-                            @if($presence->tanda_tangan)
-                                <img src="{{ public_path('storage/tanda_tangan/' . $presence->tanda_tangan) }}" width="80">
-                            @else
-                                Tidak Ada
-                            @endif
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $presence->nama }}</td>
+                    <td>{{ $presence->nip }}</td>
+                    <td>{{ $presence->jabatan }}</td>
+                    <td>{{ $presence->email }}</td>
+                    <td>{{ $presence->no_hp }}</td>
+                    <td>{{ $presence->asal_instansi }}</td>
+                    <td>
+                        @if($presence->tanda_tangan)
+                            <img src="{{ public_path('storage/tanda_tangan/' . $presence->tanda_tangan) }}" alt="TTD">
+                        @else
+                            Tidak Ada
+                        @endif
+                    </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

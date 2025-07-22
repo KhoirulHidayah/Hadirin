@@ -20,5 +20,6 @@ class PresenceDetail extends Model
         'no_hp',
         'asal_instansi',
         'tanda_tangan',
+        'waktu_absen',
     ];
 }

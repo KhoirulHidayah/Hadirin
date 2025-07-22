@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('tempat');
             $table->string('slug');
             $table->datetime('tgl_kegiatan');
+            $table->time('waktu_selesai')->nullable(); // remove after()
+            $table->enum('status', ['aktif', 'selesai'])->default('aktif'); // remove after()
             $table->timestamps();
         });
     }

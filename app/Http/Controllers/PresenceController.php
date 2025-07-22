@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Presence;
 use App\Models\PresenceDetail;
+use App\Models\Instagram;
+use App\Models\Slide;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PresenceController extends Controller
 {
@@ -26,10 +29,9 @@ class PresenceController extends Controller
         return view('presence.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu], compact('presences'));
     }
 
-
     public function list(Request $request)
     {
-        $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan');
+        $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status');
 
         return DataTables::of($Presence)
             ->addIndexColumn()
@@ -39,6 +41,16 @@ class PresenceController extends Controller
             ->addColumn('waktu_mulai', function ($row) {
                 return \Carbon\Carbon::parse($row->tgl_kegiatan)->format('H:i');
             })
+            ->addColumn('waktu_selesai', function($row) {
+                return \Carbon\Carbon::parse($row->waktu_selesai)->format('H:i');
+            })
+            ->addColumn('status', function ($row) {
+                if ($row->status == 'aktif') {
+                    return '<span class="badge bg-success">Aktif</span>';
+                } else {
+                    return '<span class="badge bg-secondary">Selesai</span>';
+                }
+            })
             ->addColumn('aksi', function ($row) {
                 $btn  = '<a href="' . url('/presence/detail/' . $row->presence_id) . '" class="btn btn-info btn-sm me-1">
                             <i class="fas fa-eye"></i> 
@@ -46,14 +58,14 @@ class PresenceController extends Controller
                 $btn .= '<a href="' . url('/presence/' . $row->presence_id . '/edit') . '" class="btn btn-warning btn-sm me-1">
                             <i class="fas fa-edit"></i> 
                         </a>';
-                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/presence/' . $row->presence_id) . '">'
-                    . csrf_field() . method_field('DELETE') .
+                $btn .= '<form class="d-inline-block" method="POST" action="' . url('/presence/' . $row->presence_id) . '">' .
+                    csrf_field() . method_field('DELETE') .
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin hapus data ini?\')">
                         <i class="fas fa-trash"></i> 
                     </button></form>';
                 return $btn;
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['status', 'aksi'])
             ->make(true);
     }
 
@@ -81,20 +93,23 @@ class PresenceController extends Controller
             'tempat' => 'required',
             'tgl_kegiatan' => 'required|date',
             'waktu_mulai' => 'required|date_format:H:i',
+            'waktu_selesai' => 'required|date_format:H:i',
+            'status' => 'required|in:aktif,selesai',
         ]);
 
-        // Gabungkan tanggal dan waktu menjadi satu datetime
         $tanggalWaktu = Carbon::createFromFormat('Y-m-d H:i', $request->tgl_kegiatan . ' ' . $request->waktu_mulai);
+        $waktu_selesai = Carbon::createFromFormat('Y-m-d H:i', $request->tgl_kegiatan . ' ' . $request->waktu_selesai);
 
-        // 🔥 Generate custom UUID presence_id
         $presence_id = $this->generatePresenceID($tanggalWaktu);
 
         $data = [
             'presence_id'    => $presence_id,
             'nama_kegiatan'  => $request->nama_kegiatan,
-            'tempat'  => $request->tempat,
+            'tempat'         => $request->tempat,
             'slug'           => Str::slug($request->nama_kegiatan),
             'tgl_kegiatan'   => $tanggalWaktu,
+            'waktu_selesai'  => $waktu_selesai,
+            'status'         => $request->status,
         ];
 
         Presence::create($data);
@@ -104,24 +119,15 @@ class PresenceController extends Controller
 
     private function generatePresenceID($tgl_kegiatan)
     {
-        // Format KEG-YYYYMM
         $prefixDate = Carbon::parse($tgl_kegiatan)->format('Ym');
         $prefix = 'KEG-' . $prefixDate;
 
-        // Ambil ID terakhir dengan prefix yang sama
         $latest = Presence::where('presence_id', 'like', $prefix . '-%')
             ->orderBy('presence_id', 'desc')
             ->first();
 
-        if (!$latest) {
-            $newNumber = 1;
-        } else {
-            // Ambil 3 digit terakhir dan +1
-            $lastNumber = (int) substr($latest->presence_id, -3);
-            $newNumber = $lastNumber + 1;
-        }
+        $newNumber = $latest ? (int) substr($latest->presence_id, -3) + 1 : 1;
 
-        // Format akhir: KEG-202507-001
         return $prefix . '-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
@@ -161,18 +167,22 @@ class PresenceController extends Controller
             'tempat' => 'required|string|max:100',
             'tgl_kegiatan' => 'required|date',
             'waktu_mulai' => 'required|date_format:H:i',
+            'waktu_selesai' => 'required|date_format:H:i',
+            'status' => 'required|in:aktif,selesai',
         ]);
 
         $presence = Presence::findOrFail($presence_id);
 
-        // Gabungkan tanggal dan waktu jadi datetime
         $tanggalWaktu = Carbon::createFromFormat('Y-m-d H:i', $request->tgl_kegiatan . ' ' . $request->waktu_mulai);
+        $waktu_selesai = Carbon::createFromFormat('Y-m-d H:i', $request->tgl_kegiatan . ' ' . $request->waktu_selesai);
 
         $presence->update([
             'nama_kegiatan' => $request->nama_kegiatan,
             'tempat' => $request->tempat,
             'slug' => Str::slug($request->nama_kegiatan),
             'tgl_kegiatan' => $tanggalWaktu,
+            'waktu_selesai' => $waktu_selesai,
+            'status' => $request->status,
         ]);
 
         return redirect('/presence')->with('success', 'Data kegiatan berhasil diubah');
@@ -180,7 +190,6 @@ class PresenceController extends Controller
 
     public function destroy($presence_id)
     {
-        // Delete data detail absen
         $presenceDetail = PresenceDetail::where('presence_id', $presence_id)->get();
         foreach ($presenceDetail as $pd) {
             if ($pd->tanda_tangan) {
@@ -189,11 +198,53 @@ class PresenceController extends Controller
             $pd->delete();
         }
 
-        // Delete presence
         $presence = Presence::findOrFail($presence_id);
         $presence->delete();
 
         return redirect('/presence')->with('success', 'Data kegiatan berhasil dihapus');
     }
 
+    public function absenBySlug($slug)
+    {
+        $Presence = Presence::where('slug', $slug)->firstOrFail();
+
+        // Cek dan update status otomatis jika waktu sudah selesai
+        $endTime = Carbon::parse($Presence->tgl_kegiatan)
+                    ->setTimeFromTimeString($Presence->waktu_selesai);
+
+        if (now()->gt($endTime) && $Presence->status !== 'selesai') {
+            $Presence->update(['status' => 'selesai']);
+        }
+
+        // Cek status kegiatan
+        if ($Presence->status === 'selesai') {
+            abort(403, 'Presensi telah ditutup karena kegiatan sudah selesai.');
+        }
+
+        // Cek waktu mulai kegiatan
+        $startTime = Carbon::parse($Presence->tgl_kegiatan);
+        if (now()->lt($startTime)) {
+            abort(403, 'Presensi belum dibuka.');
+        }
+
+        $slides = Slide::all();
+        $instagrams = Instagram::first();
+
+        return view('absen.index', [
+            'Presence' => $Presence,
+            'slides' => $slides,
+            'instagrams' => $instagrams
+        ]);
+    }
+
+    public function export_pdf()
+    {
+    $presences = Presence::all();
+
+    // Ensure the 'presence.pdf' view exists
+    $pdf = PDF::loadView('presence.pdf', ['presences' => $presences]);
+
+    // Return PDF response to prompt file download
+    return $pdf->download('Data Kegiatan ' . now()->format('Y-m-d H:i:s') . '.pdf');
+    }
 }

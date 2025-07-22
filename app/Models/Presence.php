@@ -21,6 +21,8 @@ class Presence extends Model
         'tempat',
         'slug',
         'tgl_kegiatan',
+        'waktu_selesai',
+        'status',
     ];
 
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('presence_details', function (Blueprint $table) {
             $table->id();
             $table->string('presence_id');
+            $table->dateTime('waktu_absen')->nullable();
             $table->string('nama');
             $table->string('nip', 25);
             $table->string('jabatan');

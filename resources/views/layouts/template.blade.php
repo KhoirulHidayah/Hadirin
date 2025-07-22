@@ -26,6 +26,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   @stack('css')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed"> {{-- layout-fixed agar sidebar sticky --}}
@@ -38,7 +39,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ url('/') }}" class="brand-link custom-brand">
       <img src="{{ asset('adminlte/dist/img/pln.png') }}" alt="Logo PLN" class="brand-image">
-      <span class="brand-text">Hadirin</span>
+      <span class="brand-text">Hadirin by PLN</span>
     </a>
     @include('layouts.sidebar')
   </aside>

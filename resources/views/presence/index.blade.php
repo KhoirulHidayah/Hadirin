@@ -1,14 +1,23 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="card card-outline card-primary">
-    <div class="card-body">
-        <div class="text-right mb-3">
-             <a class="btn btn-primary btn-sm" href="{{ url('presence/create') }}">
-                    <i class="fas fa-plus"></i> Tambah Pegawai
-            </a> 
+<div class="card shadow-lg mb-4"> {{-- Changed to card with larger shadow --}}
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h6 class="mb-0 text-white">
+                <i class="fas fa-calendar-alt mr-2"></i> Daftar Kegiatan
+            </h6>
+            <div class="ml-auto d-flex flex-wrap gap-2">
+                <a href="{{ route('presence.export.pdf') }}" class="btn btn-danger btn-sm mr-2">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </a>
+                <a class="btn btn-info btn-sm" href="{{ url('presence/create') }}">
+                    <i class="fas fa-plus"></i> Tambah Kegiatan
+                </a>
+            </div>
         </div>
-
+    </div>
+    <div class="card-body"> {{-- Wrapped content in card-body --}}
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
@@ -18,7 +27,7 @@
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover table-sm" id="presences">
-                <thead>
+                <thead class="thead-light"> {{-- Added thead-light for consistent header background --}}
                     <tr>
                         <th>No.</th>
                         <th>Kode Kegiatan</th>
@@ -27,6 +36,8 @@
                         <th>Slug</th>
                         <th>Tanggal Kegiatan</th>
                         <th>Waktu Mulai</th>
+                        <th>Waktu Selesai</th>
+                        <th>Status</th>
                         <th>Opsi</th>
                     </tr>
                 </thead>
@@ -35,39 +46,97 @@
     </div>
 </div>
 
-<!-- Modal tetap aktif -->
 <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog"
      data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
 <style>
-    table#presences {
-        font-size: 12px;
+    /* Overall improvements - similar to pegawai page */
+    body {
+        background-color: #f8f9fa; /* Light grey background for the body */
+    }
+
+    .card {
+        border: none; /* Remove default card border */
+        border-radius: 0.75rem; /* More rounded corners for cards */
+        overflow: hidden; /* Ensures content respects border-radius */
+    }
+
+    .card-header {
+        border-bottom: none; /* Remove border under card header */
+        padding: 1.25rem 1.5rem; /* More padding */
+        font-size: 1.1rem; /* Slightly larger title */
+        font-weight: 600; /* Bolder title */
+    }
+
+    .card-body {
+        padding: 1.5rem; /* More padding inside card body */
+    }
+
+    /* Table specific styles - matched with pegawai page */
+    table#presences { /* Changed ID from #pegawai to #presences */
+        font-size: 13px; /* Slightly increased font size for readability */
         width: 100% !important;
         table-layout: auto;
+        border-collapse: separate; /* Allows for border-radius on cells */
+        border-spacing: 0;
     }
 
     table#presences th,
     table#presences td {
-        padding: 4px 6px !important;
+        padding: 10px 12px !important; /* Increased padding */
         vertical-align: middle !important;
         white-space: nowrap;
+        border: 1px solid #e9ecef; /* Lighter border for cells */
     }
 
-    table#presences td:nth-child(8),
-    table#presences th:nth-child(8) {
-        width: 90px !important;
+    table#presences th {
+        background-color: #e9ecef; /* Light grey header background */
+        color: #495057; /* Darker text for headers */
+        font-weight: 600; /* Bolder headers */
+        text-transform: uppercase; /* Uppercase headers */
+        letter-spacing: 0.5px;
+    }
+
+    table#presences tr:hover {
+        background-color: #f2f2f2; /* Subtle hover effect on rows */
+    }
+
+    /* Adjusted options column width to match pegawai page */
+    table#presences td:last-child,
+    table#presences th:last-child {
+        width: 120px !important; /* Adjusted width for options column */
         text-align: center;
     }
+    /* The original CSS had nth-child(8), but with new columns, last-child is more robust */
 
+
+    /* DataTables pagination and info styles - matched with pegawai page */
     .dataTables_wrapper .dataTables_length,
     .dataTables_wrapper .dataTables_filter,
     .dataTables_wrapper .dataTables_info,
     .dataTables_wrapper .dataTables_paginate {
-        font-size: 12px;
+        font-size: 13px; /* Slightly increased font size */
+        padding: 1rem 0; /* Add padding around these elements */
     }
 
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.3em 0.6em; /* Adjust pagination button padding */
+    }
+
+    .shadow-lg { /* Larger shadow for cards */
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1) !important;
+    }
+
+    /* Alert messages - matched with pegawai page */
+    .alert {
+        margin-bottom: 1.5rem; /* More space below alerts */
+        padding: 0.75rem 1.25rem; /* Adjust padding */
+        border-radius: 0.5rem; /* Slightly more rounded alerts */
+    }
+
+    /* Keep btn-sm-custom if you use it elsewhere for smaller buttons */
     .btn-sm-custom {
         padding: 1px 5px;
         font-size: 10px;
@@ -75,7 +144,6 @@
         border-radius: 3px;
         margin: 1px;
     }
-
 </style>
 @endpush
 
@@ -108,6 +176,8 @@ $(document).ready(function () {
             { data: 'slug', name: 'slug' },
             { data: 'tgl_kegiatan', name: 'tgl_kegiatan' },
             { data: 'waktu_mulai', name: 'waktu_mulai' },
+            { data: 'waktu_selesai', name: 'waktu_selesai' },
+            { data: 'status', name: 'status' },
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false, className: "text-center" }
         ]
     });

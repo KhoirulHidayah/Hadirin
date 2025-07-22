@@ -3,8 +3,10 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\LogoFormulirController;
 use App\Http\Controllers\PresenceDetailController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\SlideController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +32,7 @@ Route::prefix('presence')->group(function () {
     Route::get('/{presence_id}/edit', [PresenceController::class, 'edit']);    
     Route::put('/{presence_id}', [PresenceController::class, 'update']);      
     Route::delete('/{presence_id}', [PresenceController::class, 'destroy']);
+    Route::get('/export/pdf', [PresenceController::class, 'export_pdf'])->name('presence.export.pdf');
 });
 
 Route::prefix('presence_details')->group(function () {
@@ -53,8 +56,21 @@ Route::prefix('pegawai')->group(function () {
     Route::delete('/{id}', [PegawaiController::class, 'destroy']);
     Route::post('/import', [PegawaiController::class, 'import']);
     Route::get('/template/download', [PegawaiController::class, 'downloadTemplate'])->name('pegawai.template');
+    Route::get('/search', [PegawaiController::class, 'search']);
 });
 
+Route::prefix('slide')->group(function () {
+    Route::get('/', [SlideController::class, 'index'])->name('slide.index');
+    Route::post('/', [SlideController::class, 'store'])->name('slide.store');
+    Route::delete('/{id}', [SlideController::class, 'destroy'])->name('slide.destroy');
+    Route::put('/instagrams/update', [SlideController::class, 'updateInstagrams'])->name('instagrams.update');
+});
+
+Route::prefix('logo_formulir')->group(function () {
+    Route::get('/', [LogoFormulirController::class, 'edit'])->name('logo_formulir.edit');
+    Route::put('/update', [LogoFormulirController::class, 'update'])->name('logo_formulir.update');
+    Route::delete('/delete/{posisi}', [LogoFormulirController::class, 'deleteLogo'])->name('logo_formulir.deleteLogo');
+});
 
 //Publik
-Route::get('absen/{slug}', [AbsenController::class, 'index'])->name('absen.index');
+Route::get('absen/{slug}', [PresenceController::class, 'absenBySlug'])->name('absen.index');
