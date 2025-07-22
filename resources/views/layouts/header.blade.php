@@ -43,7 +43,7 @@
 
   .dropdown-item:hover {
       background-color: #007BFF;
-      color: #fff;
+      color: #feda00;
   }
 
   .dropdown-item i {
@@ -52,7 +52,7 @@
   }
 
   .dropdown-item:hover i {
-      color: #fff;
+      color: #feda00;
   }
 </style>
 
@@ -68,18 +68,25 @@
   </ul>
 
   <!-- Navbar Right -->
-  <ul class="navbar-nav ml-auto">
-    <!-- User Dropdown -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-user-circle"></i> Admin
+<ul class="navbar-nav ml-auto">
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+       aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-user-circle"></i> {{ Auth::user()->username ?? 'Guest' }}
+    </a>
+    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+      <a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a>
+      <a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="{{ route('logout') }}"
+         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+         <i class="fas fa-sign-out-alt"></i> Logout
       </a>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-        <a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a>
-        <a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
-      </div>
-    </li>
-  </ul>
+      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+          @csrf
+      </form>
+    </div>
+  </li>
+</ul>
+
 </nav>

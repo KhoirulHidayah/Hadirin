@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <!-- DataTables -->
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -27,7 +28,15 @@
   <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <style>
+    .main-sidebar {
+      background: linear-gradient(to bottom, #007bff, #0056b3) !important;
+    }
+  </style>
+
   @stack('css')
+
 </head>
 <body class="hold-transition sidebar-mini layout-fixed"> {{-- layout-fixed agar sidebar sticky --}}
 <div class="wrapper">
@@ -36,7 +45,7 @@
   @include('layouts.header')
 
   {{-- SIDEBAR --}}
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar elevation-4"> <!-- hilangkan sidebar-dark-primary -->
     <a href="{{ url('/') }}" class="brand-link custom-brand">
       <img src="{{ asset('adminlte/dist/img/pln.png') }}" alt="Logo PLN" class="brand-image">
       <span class="brand-text">Hadirin by PLN</span>

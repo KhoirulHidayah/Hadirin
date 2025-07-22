@@ -1,76 +1,97 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PresenceController;
-use App\Http\Controllers\AbsenController;
-use App\Http\Controllers\LogoFormulirController;
-use App\Http\Controllers\PresenceDetailController;
-use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\SlideController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
+use App\Http\Controllers\{
+    DashboardController,
+    PresenceController,
+    AbsenController,
+    LogoFormulirController,
+    PresenceDetailController,
+    PegawaiController,
+    SlideController,
+    AuthController
+};
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
+| Semua rute aplikasi didefinisikan di sini.
+|--------------------------------------------------------------------------
 */
 
-//Admin
-Route::get('/', [DashboardController::class, 'index']);
+// ========== AUTH ==========
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-Route::prefix('presence')->group(function () {
+    Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+});
+
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->name('password.reset');
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// ========== DASHBOARD ==========
+Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
+
+// ========== PRESENCE ==========
+Route::prefix('presence')->middleware('auth')->group(function () {
     Route::get('/', [PresenceController::class, 'index']);
     Route::post('/list', [PresenceController::class, 'list']);
     Route::get('/create', [PresenceController::class, 'create']);
-    Route::post('/', [PresenceController::class, 'store']);             
+    Route::post('/', [PresenceController::class, 'store']);
     Route::get('/detail/{presence_id}', [PresenceController::class, 'show']);
-    Route::get('/{presence_id}/edit', [PresenceController::class, 'edit']);    
-    Route::put('/{presence_id}', [PresenceController::class, 'update']);      
+    Route::get('/{presence_id}/edit', [PresenceController::class, 'edit']);
+    Route::put('/{presence_id}', [PresenceController::class, 'update']);
     Route::delete('/{presence_id}', [PresenceController::class, 'destroy']);
     Route::get('/export/pdf', [PresenceController::class, 'export_pdf'])->name('presence.export.pdf');
 });
 
-Route::prefix('presence_details')->group(function () {
-    // Digunakan oleh DataTables untuk mengambil data peserta
+// ========== PRESENCE DETAILS ==========
+Route::prefix('presence_details')->middleware('auth')->group(function () {
     Route::post('/list', [PresenceDetailController::class, 'list'])->name('presence_details.list');
     Route::post('/store', [PresenceDetailController::class, 'store'])->name('presence_details.store');
     Route::get('/{id}', [PresenceDetailController::class, 'show'])->name('presence.show');
     Route::get('/export/pdf/{id}', [PresenceDetailController::class, 'export_pdf'])->name('presence_details.export.pdf');
-    Route::delete('/{id}', [PresenceDetailController::class, 'destroy'])->name('presence_details.destroy');
     Route::get('/export/excel/{id}', [PresenceDetailController::class, 'export_excel'])->name('presence_details.export.excel');
+    Route::delete('/{id}', [PresenceDetailController::class, 'destroy'])->name('presence_details.destroy');
 });
 
-Route::prefix('pegawai')->group(function () {
+// ========== PEGAWAI ==========
+Route::prefix('pegawai')->middleware('auth')->group(function () {
     Route::get('/', [PegawaiController::class, 'index']);
     Route::post('/list', [PegawaiController::class, 'list']);
     Route::get('/create', [PegawaiController::class, 'create']);
-    Route::post('/', [PegawaiController::class, 'store']);             
+    Route::post('/', [PegawaiController::class, 'store']);
     Route::get('/detail/{id}', [PegawaiController::class, 'show']);
-    Route::get('/{id}/edit', [PegawaiController::class, 'edit']);    
-    Route::put('/{id}', [PegawaiController::class, 'update']);      
+    Route::get('/{id}/edit', [PegawaiController::class, 'edit']);
+    Route::put('/{id}', [PegawaiController::class, 'update']);
     Route::delete('/{id}', [PegawaiController::class, 'destroy']);
     Route::post('/import', [PegawaiController::class, 'import']);
     Route::get('/template/download', [PegawaiController::class, 'downloadTemplate'])->name('pegawai.template');
     Route::get('/search', [PegawaiController::class, 'search']);
 });
 
-Route::prefix('slide')->group(function () {
+// ========== SLIDE ==========
+Route::prefix('slide')->middleware('auth')->group(function () {
     Route::get('/', [SlideController::class, 'index'])->name('slide.index');
     Route::post('/', [SlideController::class, 'store'])->name('slide.store');
     Route::delete('/{id}', [SlideController::class, 'destroy'])->name('slide.destroy');
     Route::put('/instagrams/update', [SlideController::class, 'updateInstagrams'])->name('instagrams.update');
 });
 
-Route::prefix('logo_formulir')->group(function () {
+// ========== LOGO FORMULIR ==========
+Route::prefix('logo_formulir')->middleware('auth')->group(function () {
     Route::get('/', [LogoFormulirController::class, 'edit'])->name('logo_formulir.edit');
     Route::put('/update', [LogoFormulirController::class, 'update'])->name('logo_formulir.update');
     Route::delete('/delete/{posisi}', [LogoFormulirController::class, 'deleteLogo'])->name('logo_formulir.deleteLogo');
 });
 
-//Publik
+// ========== PUBLIK ==========
 Route::get('absen/{slug}', [PresenceController::class, 'absenBySlug'])->name('absen.index');
