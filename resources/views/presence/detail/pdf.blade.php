@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <title>Formulir Daftar Hadir Rapat</title>
     <style>
+        /* --- Pengaturan Dasar --- */
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 11px; /* Ukuran font dasar sedikit diperkecil */
+            margin: 0;
         }
 
         .page-wrapper {
-            border: 1px solid #0000007c; /* Garis tepi tipis */
-            padding: 10px;          /* Jarak isi ke tepi */
+            border: 1px solid #ccc;
+            padding: 15px;
         }
 
         table {
@@ -19,159 +21,184 @@
             border-collapse: collapse;
         }
 
-        .kop-wrapper {
+        /* --- KOP Surat --- */
+        .kop-surat {
             border: 1px solid #000;
+            width: 100%;
         }
 
-        .kop-logo {
-            width: 50px;
-            height: auto;
+        .kop-surat td {
+            vertical-align: middle;
+            padding: 5px;
         }
 
-        .kop-title {
+        .logo-pln-cell {
+            width: 12%;
             text-align: center;
+        }
+        
+        .logo-pln {
+            width: 60px;
+        }
+
+        .kop-title-cell {
+            width: 70%;
+            padding-left: 10px;
+        }
+
+        .kop-main-title {
             font-weight: bold;
             font-size: 14px;
         }
 
-        .kop-subtitle {
+        .logo-kanan-cell {
+            width: 3%;
+            text-align: right;
+            vertical-align: bottom;
+            padding-bottom: 10px;
+            padding-right: 0px;
+        }
+
+        .logo-kanan {
+            display: inline-flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            gap: 8px;
+            margin-top: 15px;
+            margin-right: 10px;
+        }
+
+        .logo-kanan img {
+            width: 50px;
+        }
+
+        /* --- Baris Judul Formulir & Info Dokumen --- */
+        .judul-form-cell {
+            border: 1px solid #000;
             text-align: center;
-            font-size: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            vertical-align: middle;
+            padding: 8px;
         }
 
-        .doc-info {
+        /* --- Tabel Info Dokumen --- */
+        .info-dokumen-cell {
+            width: 30%;
             border: 1px solid #000;
-            font-size: 11px;
-        }
-
-        .doc-info td {
-            border: 1px solid #000;
-            padding: 2px 6px;
-        }
-
-        .kop-header td {
+            padding: 0;
             vertical-align: top;
         }
-
-        .header-title-row td {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
-            font-weight: bold;
-            text-align: center;
-            font-size: 14px;
-            padding: 6px;
+        .info-dokumen {
+            font-size: 9px;
+        }
+        .info-dokumen td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+        }
+        .info-dokumen td:first-child {
+            width: 40%;
         }
 
-        .table-bordered th,
-        .table-bordered td {
-            border: 1px solid black;
-            padding: 4px;
+        /* --- Informasi Rapat --- */
+        .info-rapat {
+            margin: 20px 0;
+            font-size: 12px;
         }
-
-        .meeting-info {
-            margin: 10px 0;
-        }
-
-        .meeting-info td:nth-child(2) {
-            padding-left: 4px;
-        }
-
-        .label {
+        .info-rapat .label {
             width: 120px;
             font-weight: bold;
         }
-
-        .table-bordered {
-    table-layout: fixed;
-    width: 100%;
-}
-
-.table-bordered th,
-.table-bordered td {
-    border: 1px solid black;
-    padding: 4px;
-    vertical-align: top;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.table-bordered td img {
-    max-width: 70px;   /* dibatasi */
-    height: auto;
-    display: block;
-    margin: auto;
-}
-
+        .info-rapat td {
+            padding: 1px 0;
+        }
+        .info-rapat td:nth-child(2) {
+            padding-left: 8px; /* Jarak untuk titik dua */
+        }
+        
+        /* --- Tabel Utama Daftar Hadir --- */
+        .tabel-hadir {
+            table-layout: fixed; /* Mencegah kolom berubah ukuran */
+        }
+        .tabel-hadir th,
+        .tabel-hadir td {
+            border: 1px solid black;
+            padding: 5px;
+            vertical-align: top;
+            word-wrap: break-word; /* Memastikan teks panjang tidak merusak layout */
+        }
+        .tabel-hadir thead th {
+            text-align: center;
+            font-weight: bold;
+            background-color: #cfdce0; /* Latar abu-abu untuk header */
+        }
+        .tabel-hadir tbody td {
+            text-align: left;
+        }
+        .tabel-hadir tbody td:first-child {
+            text-align: center; /* Nomor urut di tengah */
+        }
+        .tabel-hadir .ttd-img {
+            max-width: 50px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <div class="page-wrapper">
-        <table class="kop-wrapper" style="width: 100%; border-collapse: collapse;">
-            <!-- Baris 1: KOP -->
-            <tr style="border-bottom: 1px solid black;">
-                <!-- Logo PLN -->
-                <td width="15%" style="text-align: center; vertical-align: middle; padding: 5px;">
-                <img src="{{ public_path('images/logo_pln.png') }}" style="width: 60px;"><br>
+        <table class="kop-surat">
+            <tr>
+                <td class="logo-pln-cell">
+                    <img src="{{ public_path('images/logo_pln.png') }}" class="logo-pln">
                 </td>
-                <!-- Judul Tengah -->
-                <td width="70%" style="text-align: left; vertical-align: middle; padding: 0px;">
-                <div style="font-weight: bold; font-size: 15px; line-height: 1.2; margin: 2px 0;">PT PLN (PERSERO)</div>
-                <div style="font-weight: bold; font-size: 15px; line-height: 1.2; margin: 2px 0;">UNIT INDUK TRANSMISI JAWA BAGIAN TIMUR DAN BALI</div>
+                <td class="kop-title-cell">
+                    <div class="kop-main-title">PT PLN (PERSERO)</div>
+                    <div class="kop-main-title">UNIT INDUK TRANSMISI JAWA BAGIAN TIMUR DAN BALI</div>
                 </td>
-                <!-- Logo SMK3 dan ISO -->
-                <td width="25%" style="text-align: center; vertical-align: middle; padding: 5px;">
-                <img src="{{ public_path('images/logo_smk3.jpg') }}" style="width: 45px; margin-top: 24px;">
-                <img src="{{ public_path('images/logo_iso.png') }}" style="width: 60px; margin-top: 16px;">
+                <td class="logo-kanan-cell">
+                    <div class="logo-kanan">
+                        <img src="{{ public_path('images/logo_smk3.png') }}">
+                        <img src="{{ public_path('images/logo_iso.png') }}">
+                    </div>
                 </td>
             </tr>
-            <!-- Baris 2: Judul Formulir + Info Dokumen -->
             <tr>
-                <!-- Kolom kiri: Judul Formulir (gabung 2 kolom) -->
-                <td colspan="2" style="
-                    border: 1px solid #000;
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: 20px;
-                    vertical-align: middle;
-                    padding: 4px;
-                ">
+                <td colspan="2" class="judul-form-cell">
                     FORMULIR DAFTAR HADIR RAPAT
                 </td>
-
-                <!-- Kolom kanan: Info Dokumen -->
-                <td style="border: 1px solid #000; padding: 0;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                <td class="info-dokumen-cell">
+                    <table class="info-dokumen">
                         <tr>
-                            <td style="border: 1px solid #000; padding: 1px; width: 40%;">No. Dokumen</td>
-                            <td style="border: 1px solid #000; padding: 1px; width: 60%;">FK3.TJBTB.01.00.02</td>
+                            <td><strong>No. Dokumen</strong></td>
+                            <td>FK3.TJBTB.01.00.02</td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid #000; padding: 1px;">Edisi / Revisi</td>
-                            <td style="border: 1px solid #000; padding: 1px;">00 / 00</td>
+                            <td><strong>Edisi / Revisi</strong></td>
+                            <td>00 / 00</td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid #000; padding: 1px;">BerlakuEfektif</td>
-                            <td style="border: 1px solid #000; padding: 1px;">01 JANUARI 2019</td>
+                            <td><strong>BerlakuEfektif</strong></td>
+                            <td>01 JANUARI 2019</td>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid #000; padding: 1px;">Halaman</td>
-                            <td style="border: 1px solid #000; padding: 1px;"></td>
+                            <td><strong>Halaman</strong></td>
+                            <td></td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
 
-        <!-- Informasi Rapat -->
-        <br>
-        <table class="meeting-info">
+        <table class="info-rapat">
             <tr>
                 <td class="label">Hari / Tanggal</td>
                 <td>: {{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->translatedFormat('l, d F Y') }}</td>
             </tr>
             <tr>
                 <td class="label">Waktu</td>
-                <td>: {{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->format('H:i') }}</td>
+                <td>: {{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }}</td> 
             </tr>
             <tr>
                 <td class="label">Tempat</td>
@@ -183,19 +210,16 @@
             </tr>
         </table>
 
-        <!-- Tabel Daftar Hadir -->
-        <br>
-        <table class="table-bordered">
+        <table class="tabel-hadir">
             <thead>
                 <tr>
                     <th style="width: 5%;">No.</th>
-                    <th style="width: 9%;">Nama</th>
+                    <th style="width: 15%;">Nama</th>
                     <th style="width: 20%;">NIP</th>
                     <th style="width: 15%;">Jabatan/Bidang</th>
-                    <th style="width: 13%;">Email</th>
+                    <th style="width: 16%;">Email</th>
                     <th style="width: 14%;">No. HP</th>
-                    <th style="width: 13%;">Unit/Instansi</th>
-                    <th style="width: 11%;">Tanda Tangan</th>
+                    <th style="width: 15%;">Tanda Tangan</th>
                 </tr>
             </thead>
             <tbody>
@@ -207,12 +231,11 @@
                     <td>{{ $presence->jabatan }}</td>
                     <td>{{ $presence->email }}</td>
                     <td>{{ $presence->no_hp }}</td>
-                    <td>{{ $presence->asal_instansi }}</td>
-                    <td>
+                    <td style="text-align: center;">
                         @if($presence->tanda_tangan)
-                            <img src="{{ public_path('storage/tanda_tangan/' . $presence->tanda_tangan) }}" alt="TTD">
+                            <img src="{{ public_path('storage/tanda_tangan/' . $presence->tanda_tangan) }}" alt="TTD" class="ttd-img">
                         @else
-                            Tidak Ada
+                            -
                         @endif
                     </td>
                 </tr>

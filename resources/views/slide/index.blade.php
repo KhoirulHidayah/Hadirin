@@ -12,42 +12,34 @@
 
         {{-- Section: Information and Notifications --}}
         <div class="mb-4">
-            <div class="alert alert-info d-flex align-items-center fade show" role="alert">
-                <i class="fas fa-info-circle mr-3 fa-lg"></i>
+            <div class="alert alert-info d-flex align-items-center position-relative fade show" role="alert">
+                <i class="fas fa-info-circle me-2 fa-lg"></i>
                 <div>
                     Format gambar yang diperbolehkan: <strong>JPG, JPEG, PNG, WEBP</strong>. Maksimal ukuran file: <strong>2MB</strong>.
                 </div>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close"></button>
             </div>
 
             @if(session('success'))
-                <div class="alert alert-success d-flex align-items-center fade show" role="alert">
-                    <i class="fas fa-check-circle mr-3 fa-lg"></i>
-                    <div>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="alert alert-success d-flex align-items-center position-relative fade show" role="alert">
+                    <i class="fas fa-check-circle me-2 fa-lg"></i>
+                    <div>{{ session('success') }}</div>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="alert alert-danger d-flex align-items-center fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle mr-3 fa-lg"></i>
+                <div class="alert alert-danger d-flex align-items-start position-relative fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2 fa-lg mt-1"></i>
                     <div>
                         <strong>Terjadi kesalahan:</strong>
-                        <ul>
+                        <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
         </div>

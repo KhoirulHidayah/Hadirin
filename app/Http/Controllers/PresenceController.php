@@ -31,9 +31,18 @@ class PresenceController extends Controller
 
     public function list(Request $request)
     {
-        $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status');
+        $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status')->get();
 
-        return DataTables::of($Presence)
+        foreach ($Presence as $item) {
+            $endTime = Carbon::parse($item->tgl_kegiatan)
+                            ->setTimeFromTimeString($item->waktu_selesai);
+
+            if (now()->gt($endTime) && $item->status !== 'selesai') {
+                $item->update(['status' => 'selesai']);
+            }
+        }
+
+        return DataTables::of(Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status'))
             ->addIndexColumn()
             ->addColumn('tgl_kegiatan', function ($row) {
                 return \Carbon\Carbon::parse($row->tgl_kegiatan)->format('d-m-Y');
@@ -52,12 +61,8 @@ class PresenceController extends Controller
                 }
             })
             ->addColumn('aksi', function ($row) {
-                $btn  = '<a href="' . url('/presence/detail/' . $row->presence_id) . '" class="btn btn-info btn-sm me-1">
-                            <i class="fas fa-eye"></i> 
-                        </a>';
-                $btn .= '<a href="' . url('/presence/' . $row->presence_id . '/edit') . '" class="btn btn-warning btn-sm me-1">
-                            <i class="fas fa-edit"></i> 
-                        </a>';
+                $btn  = '<a href="' . url('/presence/detail/' . $row->presence_id) . '" class="btn btn-info btn-sm me-1"><i class="fas fa-eye"></i></a>';
+                $btn .= '<a href="' . url('/presence/' . $row->presence_id . '/edit') . '" class="btn btn-warning btn-sm me-1"><i class="fas fa-edit"></i></a>';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/presence/' . $row->presence_id) . '">' .
                     csrf_field() . method_field('DELETE') .
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin hapus data ini?\')">
@@ -136,8 +141,8 @@ class PresenceController extends Controller
         $Presence = Presence::findOrFail($presence_id);
 
         $breadcrumb = (object)[
-            'title' => 'Detail Daftar Absen Kegiatan',
-            'list' => ['Home','Daftar Kegiatan', 'Detail Daftar Absen Kegiatan']
+            'title' => 'Detail Daftar Kegiatan',
+            'list' => ['Home','Daftar Kegiatan', 'Detail Daftar Kegiatan']
         ];
         $page = (object)[
             'title' => 'Detail Daftar Absen Kegiatan'

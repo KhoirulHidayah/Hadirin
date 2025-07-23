@@ -43,7 +43,7 @@
             <tr>
                 <td class="font-weight-bold">Waktu</td>
                 <td>:</td>
-                <td>{{ date('H:i', strtotime($Presence->waktu_mulai)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }}</td> {{-- Displaying both start and end time --}}
+                <td>{{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }}</td> {{-- Displaying both start and end time --}}
             </tr>
             <tr>
                 <td class="font-weight-bold">Status</td>

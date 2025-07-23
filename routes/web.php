@@ -10,7 +10,8 @@ use App\Http\Controllers\{
     PresenceDetailController,
     PegawaiController,
     SlideController,
-    AuthController
+    AuthController,
+    ProfileController
 };
 
 /*
@@ -36,6 +37,13 @@ Route::get('/reset-password/{token}', function ($token) {
 })->name('password.reset');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
+// ========== UPDATE PSSWORD DAN PROFIL ==========
+Route::middleware('auth')->prefix('profile')->group(function () {
+    Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+});
 
 // ========== DASHBOARD ==========
 Route::get('/', [DashboardController::class, 'index'])->middleware('auth');

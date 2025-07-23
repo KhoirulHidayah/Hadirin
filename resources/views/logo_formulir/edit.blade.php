@@ -15,12 +15,12 @@
         <div class="card-body">
             {{-- Success Notification --}}
             @if(session('success'))
-                <div class="alert alert-success d-flex align-items-center fade show" role="alert">
+                <div class="alert alert-success d-flex align-items-center position-relative fade show" role="alert">
                     <i class="fas fa-check-circle mr-3 fa-lg"></i>
                     <div>
                         {{ session('success') }}
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -28,17 +28,17 @@
 
             {{-- Error Notification --}}
             @if($errors->any())
-                <div class="alert alert-danger d-flex align-items-center fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle mr-3 fa-lg"></i>
+                <div class="alert alert-danger d-flex align-items-start position-relative fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle mr-3 fa-lg mt-1"></i>
                     <div>
                         <strong>Terjadi kesalahan:</strong>
-                        <ul>
+                        <ul class="mb-0">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

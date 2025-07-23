@@ -67,23 +67,39 @@
     </li>
   </ul>
 
-  <!-- Navbar Right -->
+<!-- Navbar Right -->
 <ul class="navbar-nav ml-auto">
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-       aria-haspopup="true" aria-expanded="false">
-      <i class="fas fa-user-circle"></i> {{ Auth::user()->username ?? 'Guest' }}
+    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      
+      {{-- Tampilkan Avatar --}}
+      @if (Auth::user()->avatar)
+        <img src="{{ asset('storage/' . Auth::user()->avatar) }}"
+            alt="Avatar"
+            class="rounded-circle"
+            width="32" height="32"
+            style="object-fit: cover; margin-right: 8px;">
+      @else
+        <i class="fas fa-user-circle fa-2x mr-2"></i>
+      @endif
+
+      {{-- Tampilkan Username --}}
+      <span>{{ Auth::user()->username ?? 'Guest' }}</span>
     </a>
+
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-      <a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a>
-      <a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a>
+      <!-- Link ke edit profil -->
+      <a class="dropdown-item" href="{{ route('profile.edit') }}">
+        <i class="fas fa-user"></i> Manage Profile
+      </a>
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="{{ route('logout') }}"
-         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-         <i class="fas fa-sign-out-alt"></i> Logout
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fas fa-sign-out-alt"></i> Logout
       </a>
       <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-          @csrf
+        @csrf
       </form>
     </div>
   </li>
