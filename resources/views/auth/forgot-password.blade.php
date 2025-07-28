@@ -78,7 +78,7 @@
       background: transparent;
       border: none;
       padding: 0.9rem 1rem;
-      font-size: 1rem;
+      font-size: 0.875rem;;
     }
 
     .input-group-text {
@@ -91,24 +91,23 @@
       color: #a0a0b2;
     }
 
-.btn-warning {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  border: none;
-  border-radius: 0.75rem;
-  padding: 0.85rem;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  color: #fff; /* Teks putih */
-}
+    .btn-warning {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      color: #fff; /* Teks putih */
+    }
 
-.btn-warning:hover {
-  background: linear-gradient(135deg, var(--primary-dark), var(--accent));
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-  transform: translateY(-2px);
-  color: #fff; /* Tetap putih saat hover */
-}
-
+    .btn-warning:hover {
+      background: linear-gradient(135deg, var(--primary-dark), var(--accent));
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      transform: translateY(-2px);
+      color: #fff; /* Tetap putih saat hover */
+    }
 
     .alert-success {
       background-color: #d1e7dd;
@@ -176,7 +175,7 @@
                 <label for="email" class="form-label">Alamat Email</label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                  <input id="email" type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="contoh@gmail.com" required autofocus>
+                  <input id="email" type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Masukkan email Anda" required autofocus>
                 </div>
                 @error('email') <small class="text-danger mt-1 d-block">{{ $message }}</small> @enderror
               </div>

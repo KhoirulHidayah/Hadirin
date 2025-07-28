@@ -379,7 +379,7 @@
                     <tr><td width="160"><strong>Nama Kegiatan</strong></td><td width="20">:</td><td>{{ $Presence->nama_kegiatan }}</td></tr>
                     <tr><td><strong>Tempat</strong></td><td>:</td><td>{{ $Presence->tempat }}</td></tr>
                     <tr><td><strong>Tanggal Kegiatan</strong></td><td>:</td><td>{{ \Carbon\Carbon::parse($Presence->tgl_kegiatan)->translatedFormat('l, d F Y') }}</td></tr>
-                    <tr><td><strong>Waktu</strong></td><td>:</td><td>{{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} WIB</td></tr>
+                    <tr><td><strong>Waktu</strong></td><td>:</td><td>{{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }} WIB</td></tr>
                 </table>
             </div>
         </div>

@@ -18,11 +18,27 @@
         </div>
     </div>
     <div class="card-body"> {{-- Wrapped content in card-body --}}
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+        {{-- Notifikasi Sukses --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-check-circle me-2 fa-lg"></i>
+                <div>{{ session('success') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+        {{-- Notifikasi Eror --}}
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-circle me-2 fa-lg"></i>
+                <div>{{ session('error') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
 
         <div class="table-responsive">

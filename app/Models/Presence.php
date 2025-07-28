@@ -25,4 +25,11 @@ class Presence extends Model
         'status',
     ];
 
+    // app/Models/Presence.php
+    public function details()
+    {
+        // 'presence_id' di tabel PresenceDetail, 'presence_id' di tabel Presence
+        return $this->hasMany(\App\Models\PresenceDetail::class, 'presence_id', 'presence_id');
+    }
+
 }

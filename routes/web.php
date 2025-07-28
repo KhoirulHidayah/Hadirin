@@ -5,13 +5,13 @@ use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\{
     DashboardController,
     PresenceController,
-    AbsenController,
     LogoFormulirController,
     PresenceDetailController,
     PegawaiController,
     SlideController,
     AuthController,
-    ProfileController
+    ProfileController, 
+    UserController
 };
 
 /*
@@ -69,6 +69,8 @@ Route::prefix('presence_details')->middleware('auth')->group(function () {
     Route::get('/export/pdf/{id}', [PresenceDetailController::class, 'export_pdf'])->name('presence_details.export.pdf');
     Route::get('/export/excel/{id}', [PresenceDetailController::class, 'export_excel'])->name('presence_details.export.excel');
     Route::delete('/{id}', [PresenceDetailController::class, 'destroy'])->name('presence_details.destroy');
+    Route::get('/export/word/{id}', [PresenceDetailController::class, 'exportWord'])->name('presence_details.export.word');
+
 });
 
 // ========== PEGAWAI ==========
@@ -99,6 +101,16 @@ Route::prefix('logo_formulir')->middleware('auth')->group(function () {
     Route::get('/', [LogoFormulirController::class, 'edit'])->name('logo_formulir.edit');
     Route::put('/update', [LogoFormulirController::class, 'update'])->name('logo_formulir.update');
     Route::delete('/delete/{posisi}', [LogoFormulirController::class, 'deleteLogo'])->name('logo_formulir.deleteLogo');
+});
+
+// ========== USER ==========
+Route::prefix('user')->middleware('auth')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('user.index');
+    Route::get('/create', [UserController::class, 'create'])->name('user.create');
+    Route::post('/', [UserController::class, 'store'])->name('user.store');
+    Route::get('/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 });
 
 // ========== PUBLIK ==========

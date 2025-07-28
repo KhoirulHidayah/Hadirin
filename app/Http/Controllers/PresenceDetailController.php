@@ -16,12 +16,20 @@ use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Html;
+
 
 class PresenceDetailController extends Controller
 {
     public function list(Request $request)
     {
         $data = PresenceDetail::where('presence_id', $request->presence_id);
+
+        // Tambahkan filter jika ada input 'asal_instansi'
+        if ($request->filled('asal_instansi')) {
+            $data->where('asal_instansi', $request->asal_instansi);
+        }
 
         return datatables()->of($data)
             ->addIndexColumn()
@@ -77,17 +85,24 @@ class PresenceDetailController extends Controller
         return view('absen.index', compact('Presence', 'presence_details'));
     }
 
-    public function export_pdf($id)
+    public function export_pdf(Request $request, $id)
     {
         $Presence = Presence::findOrFail($id);
-        $presence_details = PresenceDetail::where('presence_id', $id)->get();
+
+        $presence_details = PresenceDetail::where('presence_id', $id);
+
+        if ($request->filled('instansi')) {
+            $presence_details->where('asal_instansi', $request->instansi);
+        }
+
+        $presence_details = $presence_details->get();
 
         $pdf = PDF::loadView('presence.detail.pdf', [
             'Presence' => $Presence,
             'presence_details' => $presence_details
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('Daftar Absensi - ' . $Presence->nama_kegiatan . ' - ' . now()->format('Ymd_His') . '.pdf');
+        return $pdf->download('Daftar-Hadir-' . $Presence->nama_kegiatan . '-' . now()->format('Ymd_His') . '.pdf');
     }
 
     public function destroy($id)
@@ -195,6 +210,19 @@ public function export_excel($id)
 
     $writer->save('php://output');
     exit;
+}
+
+public function exportWord($id)
+{
+    $Presence = Presence::findOrFail($id);
+    $presence_details = PresenceDetail::where('presence_id', $id)->get();
+
+    return response()->view('presence.detail.word', [
+        'Presence' => $Presence,
+        'presence_details' => $presence_details
+    ])
+    ->header('Content-Type', 'application/vnd.ms-word')
+    ->header('Content-Disposition', 'attachment; filename="Daftar Absensi - ' . $Presence->nama_kegiatan . ' - ' . now()->format('Ymd_His') . '.doc"');
 }
 
 }

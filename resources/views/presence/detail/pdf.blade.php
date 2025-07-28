@@ -144,6 +144,13 @@
             display: block;
             margin: 0 auto;
         }
+
+        .inline-label {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
     </style>
 </head>
 <body>
@@ -210,6 +217,12 @@
             </tr>
         </table>
 
+        @if(request('instansi'))
+            <div class="inline-label">
+                <strong>Unit/Instansi:</strong>
+                <span>{{ request('instansi') }}</span>
+            </div>
+        @endif        
         <table class="tabel-hadir">
             <thead>
                 <tr>

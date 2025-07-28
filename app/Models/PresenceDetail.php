@@ -22,4 +22,11 @@ class PresenceDetail extends Model
         'tanda_tangan',
         'waktu_absen',
     ];
+
+    // app/Models/PresenceDetail.php
+    public function presence()
+    {
+        // 'presence_id' di tabel PresenceDetail, 'presence_id' di tabel Presence
+        return $this->belongsTo(\App\Models\Presence::class, 'presence_id', 'presence_id');
+    }
 }

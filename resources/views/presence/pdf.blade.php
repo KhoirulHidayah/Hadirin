@@ -194,6 +194,20 @@
 
         <!-- TABEL DAFTAR KEGIATAN -->
         <br>
+        @if(request('bulan') || request('tahun'))
+        <p><strong>Periode Laporan:</strong>
+            @if(request('bulan') && request('tahun'))
+                Bulan {{ \Carbon\Carbon::create()->month(request('bulan'))->locale('id')->isoFormat('MMMM') }} {{ request('tahun') }}
+            @elseif(request('bulan'))
+                Bulan {{ \Carbon\Carbon::create()->month(request('bulan'))->locale('id')->isoFormat('MMMM') }}
+            @elseif(request('tahun'))
+                Tahun {{ request('tahun') }}
+            @endif
+        </p>
+        @endif
+        @if($presences->isEmpty())
+            <p><strong>Tidak ada data kegiatan yang ditemukan.</strong></p>
+        @else
         <table class="tabel-hadir">
             <thead>
                 <tr>
@@ -222,6 +236,7 @@
                 @endforeach
             </tbody>
         </table>
+        @endif
     </div>
 </body>
 </html>

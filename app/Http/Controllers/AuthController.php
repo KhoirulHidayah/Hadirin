@@ -23,8 +23,9 @@ class AuthController extends Controller
         ]);
 
         $login_type = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $remember = $request->has('remember'); // BUKAN remember_token
 
-        if (Auth::attempt([$login_type => $request->login, 'password' => $request->password])) {
+        if (Auth::attempt([$login_type => $request->login, 'password' => $request->password], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended('/');
         }

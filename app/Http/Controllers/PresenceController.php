@@ -31,6 +31,21 @@ class PresenceController extends Controller
 
     public function list(Request $request)
     {
+        $query = Presence::query();
+
+        // Filter berdasarkan bulan jika ada
+        if ($request->bulan) {
+            $query->whereMonth('tgl_kegiatan', $request->bulan);
+        }
+
+        // Filter berdasarkan tahun
+        if ($request->tahun) {
+            $query->whereYear('tgl_kegiatan', $request->tahun);
+        }
+
+        // Jika tidak ada data setelah filter, query tetap dijalankan tapi akan kosong
+        $Presence = $query->get();
+
         $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status')->get();
 
         foreach ($Presence as $item) {
@@ -42,7 +57,7 @@ class PresenceController extends Controller
             }
         }
 
-        return DataTables::of(Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status'))
+        return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('tgl_kegiatan', function ($row) {
                 return \Carbon\Carbon::parse($row->tgl_kegiatan)->format('d-m-Y');
@@ -242,14 +257,24 @@ class PresenceController extends Controller
         ]);
     }
 
-    public function export_pdf()
-    {
-    $presences = Presence::all();
+        public function export_pdf(Request $request)
+        {
+            $query = Presence::query();
 
-    // Ensure the 'presence.pdf' view exists
-    $pdf = PDF::loadView('presence.pdf', ['presences' => $presences]);
+            if ($request->filled('bulan')) {
+                $query->whereMonth('tgl_kegiatan', $request->bulan);
+            }
 
-    // Return PDF response to prompt file download
-    return $pdf->download('Data Kegiatan ' . now()->format('Y-m-d H:i:s') . '.pdf');
-    }
+            if ($request->filled('tahun')) {
+                $query->whereYear('tgl_kegiatan', $request->tahun);
+            }
+
+            $presences = $query->get();
+
+            $pdf = PDF::loadView('presence.pdf', ['presences' => $presences])
+                    ->setPaper('A4'); // Optional: buat lebih lebar
+
+            return $pdf->download('Data_Kegiatan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+        }
+
 }

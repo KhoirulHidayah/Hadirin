@@ -101,7 +101,7 @@
         <li class="nav-item">
           <a href="{{ url('/pegawai') }}" class="nav-link {{ ($activeMenu == 'pegawai') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user-tie"></i>
-            <p>Pegawai</p>
+            <p>Data Pegawai</p>
           </a>
         </li>
 
@@ -128,6 +128,14 @@
           </a>
         </li>
         
+        <li class="nav-header">User</li>
+
+        <li class="nav-item">
+          <a href="{{ url('/user') }}" class="nav-link {{ ($activeMenu == 'user') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-users"></i> {{-- bisa diganti sesuai kebutuhan --}}
+            <p>Data User</p>
+          </a>
+        </li>
       </ul>
     </nav>
   </div>

@@ -11,11 +11,16 @@
                 <button type="button" onclick="copyLink()" class="btn btn-warning btn-sm mr-2">
                     <i class="fas fa-link"></i> Copy Link
                 </button>
-                <a href="{{ route('presence_details.export.pdf', ['id' => $Presence->presence_id]) }}" class="btn btn-danger btn-sm mr-2"> {{-- Changed to btn-light --}}
+                <a href="#" class="btn btn-danger btn-sm btn-export-pdf" id="export-pdf">
                     <i class="fas fa-file-pdf"></i> Export PDF
                 </a>
                 <a href="{{ route('presence_details.export.excel', ['id' => $Presence->presence_id]) }}" class="btn btn-success btn-sm mr-2">
                     <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+                <a href="{{ route('presence_details.export.word', ['id' => $Presence->presence_id]) }}"
+                class="btn btn-sm"
+                style="background-color: #0000FF; color: white;">
+                    <i class="fas fa-file-word"></i> Export Word
                 </a>
                 <a href="{{ url('presence') }}" class="btn btn-secondary btn-sm"> {{-- Changed to btn-info for consistent return button --}}
                     <i class="fas fa-arrow-left"></i> Kembali
@@ -43,7 +48,7 @@
             <tr>
                 <td class="font-weight-bold">Waktu</td>
                 <td>:</td>
-                <td>{{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }}</td> {{-- Displaying both start and end time --}}
+                <td>{{ date('H:i', strtotime($Presence->tgl_kegiatan)) }} - {{ date('H:i', strtotime($Presence->waktu_selesai)) }} WIB</td> {{-- Displaying both start and end time --}}
             </tr>
             <tr>
                 <td class="font-weight-bold">Status</td>
@@ -60,14 +65,53 @@
 
         <hr class="my-4"> {{-- Added a separator --}}
 
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+        {{-- Notifikasi Sukses --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-check-circle me-2 fa-lg"></i>
+                <div>{{ session('success') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+        {{-- Notifikasi Eror --}}
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-circle me-2 fa-lg"></i>
+                <div>{{ session('error') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
 
         <h6 class="mb-3 text-dark"><i class="fas fa-list-alt mr-2"></i> Daftar Peserta</h6> {{-- Added a heading for the participants list --}}
+
+        @php
+            $instansis = \App\Models\PresenceDetail::where('presence_id', $Presence->presence_id)
+                ->pluck('asal_instansi')
+                ->unique();
+        @endphp
+
+        <div class="d-flex align-items-end gap-2 mb-3">
+            <div>
+                <label for="filter_instansi" class="form-label">Filter Unit/Instansi:</label>
+                <select id="filter_instansi" class="form-control form-control-sm" style="width: 250px;">
+                    <option value="">-- Semua Instansi --</option>
+                    @foreach($instansis as $instansi)
+                        <option value="{{ $instansi }}">{{ $instansi }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+            <button type="button" class="btn btn-sm btn-secondary" id="reset-filter">
+                <i class="fas fa-sync-alt"></i> Reset
+            </button>
+            </div>
+        </div>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover table-sm w-100" id="presences"> {{-- Ensure ID is consistent with JS --}}
@@ -108,13 +152,15 @@
         table = $('#presences').DataTable({ // Make sure this ID matches the table ID in HTML
             processing: true,
             serverSide: true,
+            lengthChange: true, // Aktifkan dropdown "Show entries"
             ajax: {
                 url: "{{ url('presence_details/list') }}",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    presence_id: '{{ $Presence->presence_id }}'
+                data: function (d) {
+                    d._token = '{{ csrf_token() }}';
+                    d.presence_id = '{{ $Presence->presence_id }}';
+                    d.asal_instansi = $('#filter_instansi').val(); // kirim instansi yang dipilih
                 }
             },
             columns: [
@@ -144,6 +190,25 @@
                     }
                 }
             ]
+        });
+
+        $('#filter_instansi').change(function () {
+            table.ajax.reload();
+        });
+
+        // Tombol Reset Filter
+        $('#reset-filter').on('click', function () {
+            $('#filter_instansi').val('').trigger('change'); // lebih universal
+        });
+
+        $('#export-pdf').on('click', function (e) {
+            e.preventDefault(); // Hindari redirect langsung
+
+            const instansi = $('#filter_instansi').val();
+            const baseUrl = "{{ route('presence_details.export.pdf', $Presence->presence_id) }}";
+            const newUrl = instansi ? `${baseUrl}?instansi=${encodeURIComponent(instansi)}` : baseUrl;
+
+            window.location.href = newUrl; // Langsung buka link baru
         });
 
         // Fix lebar kolom saat sidebar pushmenu toggle

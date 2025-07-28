@@ -209,17 +209,15 @@ public function downloadTemplate()
 
     // Header dan data contoh
     $headers = ['nip', 'nama', 'jabatan', 'email', 'no_hp', 'asal_instansi'];
-    $data = ['1234567890123456', 'Contoh Nama', 'Pegawai', 'nama@email.com', '081234567890', 'UPT Malang'];
+    $data = ['1234567890123456', 'Contoh Nama', 'Pegawai', 'nama@email.com', '081234567890', 'PLN'];
 
     foreach ($headers as $index => $header) {
         $col = chr(65 + $index); // A, B, C, ...
         $sheet->setCellValue($col . '1', $header);
 
-        if ($header == 'nip') {
+        if (in_array($header, ['nip', 'no_hp'])) {
             // Set value sebagai string
             $sheet->setCellValueExplicit($col . '2', $data[$index], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-
-            // Format kolom sebagai teks juga untuk mencegah Excel otomatis ubah jadi angka
             $sheet->getStyle($col . '2')->getNumberFormat()->setFormatCode('@');
         } else {
             $sheet->setCellValue($col . '2', $data[$index]);

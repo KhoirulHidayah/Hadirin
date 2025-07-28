@@ -8,7 +8,7 @@
                 <i class="fas fa-calendar-alt mr-2"></i> Daftar Kegiatan
             </h6>
             <div class="ml-auto d-flex flex-wrap gap-2">
-                <a href="{{ route('presence.export.pdf') }}" class="btn btn-danger btn-sm mr-2">
+                <a href="#" onclick="exportPDF()" class="btn btn-danger btn-sm mr-2">
                     <i class="fas fa-file-pdf"></i> Export PDF
                 </a>
                 <a class="btn btn-info btn-sm" href="{{ url('presence/create') }}">
@@ -18,12 +18,52 @@
         </div>
     </div>
     <div class="card-body"> {{-- Wrapped content in card-body --}}
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+        {{-- Notifikasi Sukses --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-check-circle me-2 fa-lg"></i>
+                <div>{{ session('success') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+        {{-- Notifikasi Eror --}}
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-circle me-2 fa-lg"></i>
+                <div>{{ session('error') }}</div>
+                <button type="button"
+                        class="btn-close ms-auto align-self-center"
+                        data-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
         @endif
+
+<form class="form-inline mb-3" id="filter-form">
+    <div class="form-group mr-2">
+        <label for="filter-bulan" class="mr-2 font-weight-bold">Bulan:</label>
+        <select class="form-control form-control-sm" id="filter-bulan" name="bulan">
+            <option value="">-- Semua Bulan --</option>
+            @for ($i = 1; $i <= 12; $i++)
+                <option value="{{ $i }}">{{ \Carbon\Carbon::create()->month($i)->locale('id')->isoFormat('MMMM') }}</option>
+            @endfor
+        </select>
+    </div>
+    <div class="form-group mr-2">
+        <label for="filter-tahun" class="mr-2 font-weight-bold">Tahun:</label>
+        <select class="form-control form-control-sm" id="filter-tahun" name="tahun">
+            <option value="">-- Semua Tahun --</option>
+            @for ($i = now()->year; $i >= 2024; $i--)
+                <option value="{{ $i }}">{{ $i }}</option>
+            @endfor
+        </select>
+    </div>
+    <button type="button" class="btn btn-sm btn-secondary" id="reset-filter">
+        <i class="fas fa-sync-alt"></i> Reset
+    </button>
+</form>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover table-sm" id="presences">
@@ -164,8 +204,10 @@ $(document).ready(function () {
         ajax: {
             url: "{{ url('presence/list') }}",
             type: "POST",
-            data: {
-                _token: '{{ csrf_token() }}'
+            data: function(d) {
+                d._token = '{{ csrf_token() }}';
+                d.bulan = $('#filter-bulan').val();
+                d.tahun = $('#filter-tahun').val();
             }
         },
         columns: [
@@ -182,6 +224,18 @@ $(document).ready(function () {
         ]
     });
 
+    // Reload saat dropdown bulan diubah
+    $('#filter-bulan,  #filter-tahun').on('change', function () {
+        presenceTable.ajax.reload();
+    })
+
+    // Tombol Reset Filter
+    $('#reset-filter').on('click', function () {
+        $('#filter-bulan').val('');
+        $('#filter-tahun').val('');
+        presenceTable.ajax.reload();
+    });
+
     // Re-adjust DataTable columns after sidebar is toggled
     document.addEventListener('shown.lte.pushmenu', function () {
         setTimeout(() => {
@@ -195,5 +249,18 @@ $(document).ready(function () {
         }, 300);
     });
 });
+
+function exportPDF() {
+    const bulan = $('#filter-bulan').val();
+    const tahun = $('#filter-tahun').val();
+
+    const params = new URLSearchParams();
+
+    if (bulan) params.append('bulan', bulan);
+    if (tahun) params.append('tahun', tahun);
+
+    window.location.href = '{{ route("presence.export.pdf") }}' + '?' + params.toString();
+}
+
 </script>
 @endpush
