@@ -46,8 +46,12 @@
                     <td>{{ $Pegawai->no_hp }}</td>
                 </tr>
                 <tr>
-                    <th>Unit/Instansi</th>
+                    <th>Unit</th>
                     <td>{{ $Pegawai->asal_instansi }}</td>
+                </tr>
+                <tr>
+                    <th>Perusahaan</th>
+                    <td>{{ $Pegawai->kategori }}</td>
                 </tr>
             </table>
 

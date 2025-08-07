@@ -18,5 +18,12 @@ class Pegawai extends Model
         'email',
         'no_hp',
         'asal_instansi',
+        'kategori'
     ];
+
+    public function kategoriRelasi()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori', 'nama');
+    }
+
 }

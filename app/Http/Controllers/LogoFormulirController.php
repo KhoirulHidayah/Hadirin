@@ -17,9 +17,9 @@ class LogoFormulirController extends Controller
         $page = (object) [
             'title' => ''
         ];
-                $logoFormulir = LogoFormulir::first();
+        $logoFormulir = LogoFormulir::first();
         $activeMenu = 'logo_formulir';
-        return view('logo_formulir.edit', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu], compact('logoFormulir'));
+        return view('logo_formulir.edit', compact('breadcrumb', 'page', 'activeMenu', 'logoFormulir'));
     }
 
     public function update(Request $request)
@@ -32,10 +32,8 @@ class LogoFormulirController extends Controller
         ]);
 
         $logoFormulir = LogoFormulir::first();
-
         $data = $request->only(['app_name', 'header_title']);
 
-        // Hapus logo kiri lama jika diunggah logo baru
         if ($request->hasFile('logo_left')) {
             if ($logoFormulir->logo_left && Storage::disk('public')->exists($logoFormulir->logo_left)) {
                 Storage::disk('public')->delete($logoFormulir->logo_left);
@@ -43,7 +41,6 @@ class LogoFormulirController extends Controller
             $data['logo_left'] = $request->file('logo_left')->store('logos', 'public');
         }
 
-        // Hapus logo kanan lama jika diunggah logo baru
         if ($request->hasFile('logo_right')) {
             if ($logoFormulir->logo_right && Storage::disk('public')->exists($logoFormulir->logo_right)) {
                 Storage::disk('public')->delete($logoFormulir->logo_right);
@@ -52,8 +49,32 @@ class LogoFormulirController extends Controller
         }
 
         $logoFormulir->update($data);
-
         return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui.');
     }
 
+    public function destroyLeft()
+    {
+        $logoFormulir = LogoFormulir::first();
+        if ($logoFormulir && $logoFormulir->logo_left) {
+            if (Storage::disk('public')->exists($logoFormulir->logo_left)) {
+                Storage::disk('public')->delete($logoFormulir->logo_left);
+            }
+            $logoFormulir->update(['logo_left' => null]);
+        }
+
+        return redirect()->back()->with('success', 'Logo kiri berhasil dihapus.');
+    }
+
+    public function destroyRight()
+    {
+        $logoFormulir = LogoFormulir::first();
+        if ($logoFormulir && $logoFormulir->logo_right) {
+            if (Storage::disk('public')->exists($logoFormulir->logo_right)) {
+                Storage::disk('public')->delete($logoFormulir->logo_right);
+            }
+            $logoFormulir->update(['logo_right' => null]);
+        }
+
+        return redirect()->back()->with('success', 'Logo kanan berhasil dihapus.');
+    }
 }

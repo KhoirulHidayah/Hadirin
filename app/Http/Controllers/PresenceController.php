@@ -8,6 +8,8 @@ use App\Models\Presence;
 use App\Models\PresenceDetail;
 use App\Models\Instagram;
 use App\Models\Slide;
+use App\Models\Kategori;
+use App\Models\Pegawai;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Storage;
@@ -31,33 +33,38 @@ class PresenceController extends Controller
 
     public function list(Request $request)
     {
-        $query = Presence::query();
+        // Ambil kegiatan yang 'aktif'
+        $activeQuery = Presence::where('status', 'aktif');
 
-        // Filter berdasarkan bulan jika ada
+        // Ambil kegiatan yang 'selesai'
+        $finishedQuery = Presence::where('status', 'selesai');
+
+        // Terapkan filter berdasarkan bulan dan tahun pada kedua query
         if ($request->bulan) {
-            $query->whereMonth('tgl_kegiatan', $request->bulan);
+            $activeQuery->whereMonth('tgl_kegiatan', $request->bulan);
+            $finishedQuery->whereMonth('tgl_kegiatan', $request->bulan);
         }
 
-        // Filter berdasarkan tahun
         if ($request->tahun) {
-            $query->whereYear('tgl_kegiatan', $request->tahun);
+            $activeQuery->whereYear('tgl_kegiatan', $request->tahun);
+            $finishedQuery->whereYear('tgl_kegiatan', $request->tahun);
         }
+        
+        // Urutkan kegiatan yang selesai dari tanggal terkecil (ascending)
+        $finishedQuery->orderBy('tgl_kegiatan', 'asc');
 
-        // Jika tidak ada data setelah filter, query tetap dijalankan tapi akan kosong
-        $Presence = $query->get();
-
-        $Presence = Presence::select('presence_id', 'nama_kegiatan', 'tempat', 'slug', 'tgl_kegiatan', 'waktu_selesai', 'status')->get();
-
-        foreach ($Presence as $item) {
-            $endTime = Carbon::parse($item->tgl_kegiatan)
-                            ->setTimeFromTimeString($item->waktu_selesai);
-
+        // Gabungkan kedua query, dengan aktif di atas
+        $presences = $activeQuery->union($finishedQuery)->get();
+        
+        // Perbarui status jika waktu sudah selesai
+        foreach ($presences as $item) {
+            $endTime = Carbon::parse($item->tgl_kegiatan)->setTimeFromTimeString($item->waktu_selesai);
             if (now()->gt($endTime) && $item->status !== 'selesai') {
                 $item->update(['status' => 'selesai']);
             }
         }
-
-        return DataTables::of($query)
+        
+        return DataTables::of($presences)
             ->addIndexColumn()
             ->addColumn('tgl_kegiatan', function ($row) {
                 return \Carbon\Carbon::parse($row->tgl_kegiatan)->format('d-m-Y');
@@ -65,7 +72,7 @@ class PresenceController extends Controller
             ->addColumn('waktu_mulai', function ($row) {
                 return \Carbon\Carbon::parse($row->tgl_kegiatan)->format('H:i');
             })
-            ->addColumn('waktu_selesai', function($row) {
+            ->addColumn('waktu_selesai', function ($row) {
                 return \Carbon\Carbon::parse($row->waktu_selesai)->format('H:i');
             })
             ->addColumn('status', function ($row) {
@@ -76,19 +83,19 @@ class PresenceController extends Controller
                 }
             })
             ->addColumn('aksi', function ($row) {
-                $btn  = '<a href="' . url('/presence/detail/' . $row->presence_id) . '" class="btn btn-info btn-sm me-1"><i class="fas fa-eye"></i></a>';
-                $btn .= '<a href="' . url('/presence/' . $row->presence_id . '/edit') . '" class="btn btn-warning btn-sm me-1"><i class="fas fa-edit"></i></a>';
+                $btn  = '<a href="' . url('/presence/detail/' . $row->presence_id) . '" class="btn btn-info btn-sm me-1"><i class="fas fa-eye"> Detail</i></a>';
+                $btn .= '<a href="' . url('/presence/' . $row->presence_id . '/edit') . '" class="btn btn-warning btn-sm me-1"><i class="fas fa-edit"> Edit</i></a>';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/presence/' . $row->presence_id) . '">' .
                     csrf_field() . method_field('DELETE') .
                     '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Yakin hapus data ini?\')">
-                        <i class="fas fa-trash"></i> 
+                        <i class="fas fa-trash"> Hapus</i> 
                     </button></form>';
                 return $btn;
             })
             ->rawColumns(['status', 'aksi'])
             ->make(true);
     }
-
+    
     public function create()
     {
         $breadcrumb = (object) [
@@ -224,24 +231,24 @@ class PresenceController extends Controller
         return redirect('/presence')->with('success', 'Data kegiatan berhasil dihapus');
     }
 
-    public function absenBySlug($slug)
+    public function absenBySlug($presence_id, $slug)
     {
-        $Presence = Presence::where('slug', $slug)->firstOrFail();
+        $Presence = Presence::where('presence_id', $presence_id)
+                            ->where('slug', $slug)
+                            ->firstOrFail();
 
         // Cek dan update status otomatis jika waktu sudah selesai
         $endTime = Carbon::parse($Presence->tgl_kegiatan)
-                    ->setTimeFromTimeString($Presence->waktu_selesai);
+                        ->setTimeFromTimeString($Presence->waktu_selesai);
 
         if (now()->gt($endTime) && $Presence->status !== 'selesai') {
             $Presence->update(['status' => 'selesai']);
         }
 
-        // Cek status kegiatan
         if ($Presence->status === 'selesai') {
             abort(403, 'Presensi telah ditutup karena kegiatan sudah selesai.');
         }
 
-        // Cek waktu mulai kegiatan
         $startTime = Carbon::parse($Presence->tgl_kegiatan);
         if (now()->lt($startTime)) {
             abort(403, 'Presensi belum dibuka.');
@@ -249,32 +256,44 @@ class PresenceController extends Controller
 
         $slides = Slide::all();
         $instagrams = Instagram::first();
+        $categories = Kategori::all(); 
+
+        $instansiList = Pegawai::select('asal_instansi')
+            ->distinct()
+            ->whereNotNull('asal_instansi')
+            ->where('asal_instansi', '!=', '')
+            ->orderBy('asal_instansi')
+            ->pluck('asal_instansi');
 
         return view('absen.index', [
             'Presence' => $Presence,
             'slides' => $slides,
-            'instagrams' => $instagrams
+            'instagrams' => $instagrams,
+            'categories' => $categories,
+            'instansiList' => $instansiList
         ]);
     }
 
-        public function export_pdf(Request $request)
-        {
-            $query = Presence::query();
+    public function export_pdf(Request $request)
+    {
+        $query = Presence::query();
 
-            if ($request->filled('bulan')) {
-                $query->whereMonth('tgl_kegiatan', $request->bulan);
-            }
-
-            if ($request->filled('tahun')) {
-                $query->whereYear('tgl_kegiatan', $request->tahun);
-            }
-
-            $presences = $query->get();
-
-            $pdf = PDF::loadView('presence.pdf', ['presences' => $presences])
-                    ->setPaper('A4'); // Optional: buat lebih lebar
-
-            return $pdf->download('Data_Kegiatan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tgl_kegiatan', $request->bulan);
         }
 
+        if ($request->filled('tahun')) {
+            $query->whereYear('tgl_kegiatan', $request->tahun);
+        }
+
+        // Urutkan berdasarkan status 'aktif' terlebih dahulu, lalu tanggal
+        $query->orderByRaw("FIELD(status, 'aktif') DESC, tgl_kegiatan ASC");
+
+        $presences = $query->get();
+
+        $pdf = PDF::loadView('presence.pdf', ['presences' => $presences])
+                ->setPaper('A4');
+
+        return $pdf->download('Data_Kegiatan_' . now()->format('Y-m-d_H-i-s') . '.pdf');
+    }
 }

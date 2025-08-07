@@ -19,14 +19,25 @@ class PresenceDetail extends Model
         'jabatan',
         'no_hp',
         'asal_instansi',
+        'kategori', // Ubah dari 'kategori_nama' ke 'kategori'
         'tanda_tangan',
         'waktu_absen',
     ];
 
-    // app/Models/PresenceDetail.php
+    /**
+     * Define a belongsTo relationship with the Presence model.
+     */
     public function presence()
     {
-        // 'presence_id' di tabel PresenceDetail, 'presence_id' di tabel Presence
         return $this->belongsTo(\App\Models\Presence::class, 'presence_id', 'presence_id');
+    }
+
+    /**
+     * Define a belongsTo relationship with the Kategori model.
+     * It uses 'kategori' in presence_details to match 'nama' in the kategori table.
+     */
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori', 'nama');
     }
 }

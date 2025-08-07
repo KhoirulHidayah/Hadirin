@@ -40,6 +40,57 @@
                         aria-label="Close"></button>
             </div>
         @endif
+        {{-- Notifikasi Error Validasi Import --}}
+        @if(session('import_errors'))
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-start">
+                    <i class="fas fa-exclamation-triangle me-2 fa-lg mt-1 text-warning"></i>
+                    <div class="flex-grow-1">
+                        <strong>Beberapa baris gagal diimpor:</strong>
+                        <ul class="mb-0 mt-2">
+                            @foreach (session('import_errors') as $error)
+                                <li class="mb-1">
+                                    @if(isset($error['row']))
+                                        <strong>Baris {{ $error['row'] }}</strong>
+                                    @endif
+                                    @if(isset($error['nip']) && $error['nip'] && $error['nip'] !== 'NIP Kosong')
+                                        (NIP: {{ $error['nip'] }})
+                                    @endif
+                                    : {{ $error['error'] }}
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+        @endif
+
+        <form class="form-inline mb-3" id="filter-form">
+            <div class="form-group mr-2 mb-2"> {{-- Added mb-2 for spacing on smaller screens --}}
+                <label for="filter-instansi" class="mr-2 font-weight-bold">Filter Unit:</label>
+                <select class="form-control form-control-sm" id="filter-instansi" name="tahun">
+                    <option value="">-- Semua Unit --</option>
+                    @foreach ($instansiList as $instansi)
+                        <option value="{{ $instansi }}">{{ $instansi }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group mr-2 mb-2"> {{-- Added new filter for Perusahaan (Kategori) --}}
+                <label for="filter-perusahaan" class="mr-2 font-weight-bold">Filter Perusahaan:</label>
+                <select class="form-control form-control-sm" id="filter-perusahaan" name="kategori">
+                    <option value="">-- Semua Perusahaan --</option>
+                    @foreach ($kategoriList as $kategori)
+                        <option value="{{ $kategori }}">{{ $kategori }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary mb-2" id="reset-filter"> {{-- Added mb-2 --}}
+                <i class="fas fa-sync-alt"></i> Reset
+            </button>
+        </form>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover table-sm" id="pegawai">
@@ -51,7 +102,8 @@
                         <th>Jabatan/Bidang</th>
                         <th>Email</th>
                         <th>No. HP</th>
-                        <th>Unit/Instansi</th>
+                        <th>Unit</th>
+                        <th>Perusahaan</th>
                         <th>Opsi</th>
                     </tr>
                 </thead>
@@ -61,29 +113,83 @@
 </div>
 
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <form action="{{ url('/pegawai/import') }}" method="POST" enctype="multipart/form-data">
+    <div class="modal-dialog modal-lg" role="document"> {{-- Made modal larger --}}
+        <form action="{{ url('/pegawai/import') }}" method="POST" enctype="multipart/form-data" id="importForm">
             @csrf
             <div class="modal-content">
-                <div class="modal-header bg-info text-white"> {{-- Added info background to modal header --}}
-                    <h5 class="modal-title">Import Data Pegawai</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"> {{-- Changed close button color --}}
+                <div class="modal-header bg-success text-white"> {{-- Changed to success color --}}
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-import mr-2"></i>Import Data Pegawai
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group"> {{-- Added form-group for better spacing --}}
-                        <label for="file">Pilih File Excel (.xlsx / .csv)</label>
-                        <input type="file" name="file" id="file" class="form-control-file" required> {{-- Changed to form-control-file --}}
-                        <small class="form-text text-muted">Format header kolom: nip, nama, jabatan, email, no_hp, asal_instansi</small>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="file" class="font-weight-bold">
+                                    <i class="fas fa-file-excel mr-1"></i>Pilih File Excel (.xlsx / .csv)
+                                </label>
+                                <input type="file" name="file" id="file" class="form-control-file" required accept=".xlsx,.xls,.csv">
+                                <small class="form-text text-muted">
+                                    <strong>Format header kolom Excel:</strong> No, Nama, NIP, Email, Jabatan, No HP, Unit, Perusahaan
+                                </small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-3"> {{-- Increased margin-top for template link --}}
-                        <a href="{{ route('pegawai.template') }}" class="btn btn-sm btn-outline-secondary">Download Template</a> {{-- Changed template button style --}}
+                    
+                    {{-- Ketentuan Format Data --}}
+                    <div class="mt-4">
+                        <div class="card border-info">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0 text-info">
+                                    <i class="fas fa-info-circle mr-2"></i>Ketentuan Format Data
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="small mb-0 pl-3">
+                                            <li><strong>No</strong>: nomor urut (opsional)</li>
+                                            <li><strong>Nama</strong>: wajib diisi</li>
+                                            <li><strong>NIP</strong>: wajib, unik, maks 25 karakter</li>
+                                            <li><strong>Email</strong>: wajib, format valid</li>
+                                            <li><strong>Jabatan</strong>: wajib diisi</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="small mb-0 pl-3">
+                                            <li><strong>No HP</strong>: wajib, min 10 digit angka</li>
+                                            <li><strong>Unit</strong>: wajib, nama unit</li>
+                                            <li><strong>Perusahaan</strong>: wajib, sesuai kategori di DB</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-3 p-2 bg-warning text-dark rounded">
+                                    <small>
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        <strong>Penting:</strong> Pastikan kolom "Perusahaan" berisi nama perusahaan yang sudah ada di database.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <a href="{{ route('pegawai.template') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download mr-1"></i>Download Template Excel
+                        </a>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Import</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-success" id="importBtn">
+                        <i class="fas fa-upload mr-1"></i>Import Data
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i>Tutup
+                    </button>
                 </div>
             </div>
         </form>
@@ -144,8 +250,8 @@
         background-color: #f2f2f2; /* Subtle hover effect on rows */
     }
 
-    table#pegawai td:nth-child(8),
-    table#pegawai th:nth-child(8) {
+    table#pegawai td:nth-child(9),
+    table#pegawai th:nth-child(9) {
         width: 120px !important; /* Adjusted width for options column */
         text-align: center;
     }
@@ -188,6 +294,45 @@
     .form-control-file {
         padding: 0.375rem 0.75rem; /* Adjust padding for file input */
         height: auto;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        background-color: #fff;
+    }
+
+    /* Enhanced import modal styles */
+    .modal-lg {
+        max-width: 700px;
+    }
+
+    .border-info {
+        border-color: #17a2b8 !important;
+    }
+
+    /* Loading state for import button */
+    .btn.loading {
+        position: relative;
+        pointer-events: none;
+    }
+
+    .btn.loading:after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        margin: auto;
+        border: 2px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
 @endpush
@@ -209,8 +354,10 @@ $(document).ready(function () {
         ajax: {
             url: "{{ url('pegawai/list') }}",
             type: "POST",
-            data: {
-                _token: '{{ csrf_token() }}'
+            data: function (d) {
+                d._token = '{{ csrf_token() }}';
+                d.asal_instansi = $('#filter-instansi').val();
+                d.kategori = $('#filter-perusahaan').val(); // Added filter for kategori (Perusahaan)
             }
         },
         columns: [
@@ -221,10 +368,49 @@ $(document).ready(function () {
             { data: 'email', name: 'email' },
             { data: 'no_hp', name: 'no_hp' },
             { data: 'asal_instansi', name: 'asal_instansi' },
+            { data: 'kategori', name: 'kategori' },
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false, className: "text-center" }
         ]
     });
 
+    // Trigger filters
+    $('#filter-instansi').change(function () {
+        presenceTable.ajax.reload();
+    });
+
+    $('#filter-perusahaan').change(function () { // New change event for Perusahaan filter
+        presenceTable.ajax.reload();
+    });
+
+    // Reset filter
+    $('#reset-filter').on('click', function () {
+        $('#filter-instansi').val('').trigger('change');
+        $('#filter-perusahaan').val('').trigger('change'); // Reset Perusahaan filter
+    });
+
+    // Handle import form submission with loading state
+    $('#importForm').on('submit', function() {
+        var fileInput = $('#file');
+        if (fileInput[0].files.length === 0) {
+            alert('Please select a file to import.');
+            return false;
+        }
+
+        // Add loading state to button
+        $('#importBtn').addClass('loading').prop('disabled', true);
+        $('#importBtn').html('<i class="fas fa-spinner fa-spin mr-1"></i>Importing...');
+        
+        return true; // Allow form submission
+    });
+
+    // Reset import modal when closed
+    $('#importModal').on('hidden.bs.modal', function () {
+        $('#importForm')[0].reset();
+        $('#importBtn').removeClass('loading').prop('disabled', false);
+        $('#importBtn').html('<i class="fas fa-upload mr-1"></i>Import Data');
+    });
+
+    // DataTable responsive adjustments
     document.addEventListener('shown.lte.pushmenu', function () {
         setTimeout(() => {
             presenceTable.columns.adjust().draw(false);

@@ -1,7 +1,6 @@
 @extends('layouts.template')
-
 @section('content')
-<div class="card shadow-lg mb-4"> {{-- Changed to card with larger shadow --}}
+<div class="card shadow-lg mb-4">
     <div class="card-header bg-primary text-white">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
             <h6 class="mb-0 text-white">
@@ -17,8 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body"> {{-- Wrapped content in card-body --}}
-        {{-- Notifikasi Sukses --}}
+    <div class="card-body">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
                 <i class="fas fa-check-circle me-2 fa-lg"></i>
@@ -29,7 +27,6 @@
                         aria-label="Close"></button>
             </div>
         @endif
-        {{-- Notifikasi Eror --}}
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
                 <i class="fas fa-exclamation-circle me-2 fa-lg"></i>
@@ -41,33 +38,33 @@
             </div>
         @endif
 
-<form class="form-inline mb-3" id="filter-form">
-    <div class="form-group mr-2">
-        <label for="filter-bulan" class="mr-2 font-weight-bold">Bulan:</label>
-        <select class="form-control form-control-sm" id="filter-bulan" name="bulan">
-            <option value="">-- Semua Bulan --</option>
-            @for ($i = 1; $i <= 12; $i++)
-                <option value="{{ $i }}">{{ \Carbon\Carbon::create()->month($i)->locale('id')->isoFormat('MMMM') }}</option>
-            @endfor
-        </select>
-    </div>
-    <div class="form-group mr-2">
-        <label for="filter-tahun" class="mr-2 font-weight-bold">Tahun:</label>
-        <select class="form-control form-control-sm" id="filter-tahun" name="tahun">
-            <option value="">-- Semua Tahun --</option>
-            @for ($i = now()->year; $i >= 2024; $i--)
-                <option value="{{ $i }}">{{ $i }}</option>
-            @endfor
-        </select>
-    </div>
-    <button type="button" class="btn btn-sm btn-secondary" id="reset-filter">
-        <i class="fas fa-sync-alt"></i> Reset
-    </button>
-</form>
+        <form class="form-inline mb-3" id="filter-form">
+            <div class="form-group mr-2">
+                <label for="filter-bulan" class="mr-2 font-weight-bold">Filter Bulan:</label>
+                <select class="form-control form-control-sm" id="filter-bulan" name="bulan">
+                    <option value="">-- Semua Bulan --</option>
+                    @for ($i = 1; $i <= 12; $i++)
+                        <option value="{{ $i }}">{{ \Carbon\Carbon::create()->month($i)->locale('id')->isoFormat('MMMM') }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <label for="filter-tahun" class="mr-2 font-weight-bold">Filter Tahun:</label>
+                <select class="form-control form-control-sm" id="filter-tahun" name="tahun">
+                    <option value="">-- Semua Tahun --</option>
+                    @for ($i = now()->year; $i >= 2024; $i--)
+                        <option value="{{ $i }}">{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary" id="reset-filter">
+                <i class="fas fa-sync-alt"></i> Reset
+            </button>
+        </form>
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover table-sm" id="presences">
-                <thead class="thead-light"> {{-- Added thead-light for consistent header background --}}
+                <thead class="thead-light">
                     <tr>
                         <th>No.</th>
                         <th>Kode Kegiatan</th>
@@ -221,6 +218,11 @@ $(document).ready(function () {
             { data: 'waktu_selesai', name: 'waktu_selesai' },
             { data: 'status', name: 'status' },
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false, className: "text-center" }
+        ],
+        // Menambahkan urutan default pada kolom status dan tanggal
+        order: [
+            [8, 'desc'], // Kolom status (index 8), diurutkan secara menurun (aktif di atas)
+            [5, 'asc'] // Kolom tanggal (index 5), diurutkan secara menaik (tanggal terkecil)
         ]
     });
 

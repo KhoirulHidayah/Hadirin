@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="icon" href="{{ asset('favicon.png') }}" type="image/png">
 
   <!-- DataTables -->
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -48,7 +49,7 @@
   {{-- SIDEBAR --}}
   <aside class="main-sidebar elevation-4"> <!-- hilangkan sidebar-dark-primary -->
     <a href="{{ url('/') }}" class="brand-link custom-brand">
-      <img src="{{ asset('adminlte/dist/img/pln.png') }}" alt="Logo PLN" class="brand-image">
+      <img src="{{ asset('images/pln.png') }}" alt="Logo PLN" class="brand-image">
       <span class="brand-text">Hadirin by PLN</span>
     </a>
     @include('layouts.sidebar')

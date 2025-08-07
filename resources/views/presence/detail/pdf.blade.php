@@ -115,6 +115,30 @@
         .info-rapat td:nth-child(2) {
             padding-left: 8px; /* Jarak untuk titik dua */
         }
+
+        /* --- Filter Information --- */
+        .filter-info {
+            margin: 15px 0;
+            font-size: 11px;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .filter-info .filter-item {
+            margin-bottom: 3px;
+        }
+        .filter-info .filter-item:last-child {
+            margin-bottom: 0;
+        }
+        .filter-label {
+            font-weight: bold;
+            color: #495057;
+        }
+        .filter-value {
+            color: #007bff;
+            font-weight: 500;
+        }
         
         /* --- Tabel Utama Daftar Hadir --- */
         .tabel-hadir {
@@ -217,26 +241,38 @@
             </tr>
         </table>
 
-        @if(request('instansi'))
-            <div class="inline-label">
-                <strong>Unit/Instansi:</strong>
-                <span>{{ request('instansi') }}</span>
+        {{-- Filter Information Section --}}
+        @if(request('instansi') || request('kategori'))
+            <div class="filter-info">
+                @if(request('instansi'))
+                    <div class="filter-item">
+                        <span class="filter-label">Unit:</span> 
+                        <span class="filter-value">{{ request('instansi') }}</span>
+                    </div>
+                @endif
+                @if(request('kategori'))
+                    <div class="filter-item">
+                        <span class="filter-label">Perusahaan:</span> 
+                        <span class="filter-value">{{ request('kategori') }}</span>
+                    </div>
+                @endif
             </div>
-        @endif        
+        @endif
+
         <table class="tabel-hadir">
             <thead>
                 <tr>
-                    <th style="width: 5%;">No.</th>
-                    <th style="width: 15%;">Nama</th>
+                    <th style="width: 4%;">No.</th>
+                    <th style="width: 16%;">Nama</th>
                     <th style="width: 20%;">NIP</th>
                     <th style="width: 15%;">Jabatan/Bidang</th>
-                    <th style="width: 16%;">Email</th>
-                    <th style="width: 14%;">No. HP</th>
-                    <th style="width: 15%;">Tanda Tangan</th>
+                    <th style="width: 19%;">Email</th>
+                    <th style="width: 15%;">No. HP</th>
+                    <th style="width: 11%;">TTD</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($presence_details as $index => $presence)
+                @forelse($presence_details as $index => $presence)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $presence->nama }}</td>
@@ -252,7 +288,13 @@
                         @endif
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 20px; color: #6c757d; font-style: italic;">
+                        Tidak ada data peserta yang sesuai dengan filter yang dipilih
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

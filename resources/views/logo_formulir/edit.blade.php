@@ -1,97 +1,127 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="card shadow-lg mb-4"> {{-- Consistent card styling with shadow --}}
+<div class="card shadow-lg mb-4">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h6 class="mb-0 text-white">
             <i class="fas fa-cog mr-2"></i> Pengaturan Header & Logo
         </h6>
     </div>
 
-    <form action="{{ route('logo_formulir.update') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
+    <div class="card-body">
+        {{-- === ALERTS === --}}
+        @if(session('success'))
+            <div class="alert alert-success d-flex align-items-center position-relative fade show" role="alert">
+                <i class="fas fa-check-circle mr-3 fa-lg"></i>
+                <div>{{ session('success') }}</div>
+                <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
 
-        <div class="card-body">
-            {{-- Success Notification --}}
-            @if(session('success'))
-                <div class="alert alert-success d-flex align-items-center position-relative fade show" role="alert">
-                    <i class="fas fa-check-circle mr-3 fa-lg"></i>
-                    <div>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        @if($errors->any())
+            <div class="alert alert-danger d-flex align-items-start position-relative fade show" role="alert">
+                <i class="fas fa-exclamation-triangle mr-3 fa-lg mt-1"></i>
+                <div>
+                    <strong>Terjadi kesalahan:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            @endif
+                <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
 
-            {{-- Error Notification --}}
-            @if($errors->any())
-                <div class="alert alert-danger d-flex align-items-start position-relative fade show" role="alert">
-                    <i class="fas fa-exclamation-triangle mr-3 fa-lg mt-1"></i>
-                    <div>
-                        <strong>Terjadi kesalahan:</strong>
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <button type="button" class="close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
+        {{-- === FORM UPDATE === --}}
+        <form action="{{ route('logo_formulir.update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-            <div class="form-group mb-3"> {{-- Consistent spacing --}}
+            {{-- APP NAME --}}
+            <div class="form-group mb-3">
                 <label for="app_name" class="form-label font-weight-bold">Nama Aplikasi (APP_NAME)</label>
                 <input type="text" class="form-control form-control-sm" id="app_name" name="app_name"
-                    value="{{ old('app_name', $logoFormulir->app_name ?? '') }}" placeholder="Masukkan nama aplikasi">
+                       value="{{ old('app_name', $logoFormulir->app_name ?? '') }}" placeholder="Masukkan nama aplikasi">
                 @error('app_name') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
+            {{-- HEADER TITLE --}}
             <div class="form-group mb-3">
                 <label for="header_title" class="form-label font-weight-bold">Judul Header</label>
                 <input type="text" class="form-control form-control-sm" id="header_title" name="header_title"
-                    value="{{ old('header_title', $logoFormulir->header_title ?? '') }}" placeholder="Masukkan judul header">
+                       value="{{ old('header_title', $logoFormulir->header_title ?? '') }}" placeholder="Masukkan judul header">
                 @error('header_title') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
+            {{-- LOGO KIRI --}}
             <div class="form-group mb-3">
                 <label for="logo_left" class="form-label font-weight-bold">Logo Kiri</label><br>
                 @if (!empty($logoFormulir->logo_left))
                     <div class="mb-2 text-muted small">Logo Saat Ini:</div>
-                    <img src="{{ asset('storage/' . $logoFormulir->logo_left) }}" alt="Logo Kiri" class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
+                    <img src="{{ asset('storage/' . $logoFormulir->logo_left) }}" alt="Logo Kiri"
+                         class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
                 @else
                     <div class="mb-2 text-muted small">Belum ada logo kiri terupload.</div>
                 @endif
                 <input class="form-control form-control-sm" type="file" id="logo_left" name="logo_left" accept="image/*">
-                <small class="form-text text-muted">Format yang didukung: JPG, PNG, WEBP. Maks. ukuran: 2MB.</small>
+                <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
                 @error('logo_left') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
+            {{-- LOGO KANAN --}}
             <div class="form-group mb-3">
                 <label for="logo_right" class="form-label font-weight-bold">Logo Kanan</label><br>
                 @if (!empty($logoFormulir->logo_right))
                     <div class="mb-2 text-muted small">Logo Saat Ini:</div>
-                    <img src="{{ asset('storage/' . $logoFormulir->logo_right) }}" alt="Logo Kanan" class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
+                    <img src="{{ asset('storage/' . $logoFormulir->logo_right) }}" alt="Logo Kanan"
+                         class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
                 @else
                     <div class="mb-2 text-muted small">Belum ada logo kanan terupload.</div>
                 @endif
                 <input class="form-control form-control-sm" type="file" id="logo_right" name="logo_right" accept="image/*">
-                <small class="form-text text-muted">Format yang didukung: JPG, PNG, WEBP. Maks. ukuran: 2MB.</small>
+                <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
                 @error('logo_right') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
-        </div>
+            {{-- BUTTON UPDATE --}}
+            <div class="d-flex justify-content-start mt-3">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="fas fa-save mr-1"></i> Update Pengaturan
+                </button>
+            </div>
+        </form>
 
-        <div class="card-footer d-flex justify-content-start"> {{-- Align button to the right --}}
-            <button type="submit" class="btn btn-primary btn-sm">
-                <i class="fas fa-save mr-1"></i> Update Pengaturan
-            </button>
-        </div>
-    </form>
+        {{-- === FORM DELETE LOGO KIRI === --}}
+        @if (!empty($logoFormulir->logo_left))
+            <div class="mt-4 border-top pt-3">
+                <form action="{{ route('logo_formulir.delete_left') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kiri?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kiri
+                    </button>
+                </form>
+            </div>
+        @endif
+
+        {{-- === FORM DELETE LOGO KANAN === --}}
+        @if (!empty($logoFormulir->logo_right))
+            <div class="mt-3">
+                <form action="{{ route('logo_formulir.delete_right') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kanan?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kanan
+                    </button>
+                </form>
+            </div>
+        @endif
+    </div>
 </div>
 @endsection
 

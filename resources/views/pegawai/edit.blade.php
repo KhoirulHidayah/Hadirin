@@ -82,10 +82,27 @@
                 </div>
 
                 <div class="form-group row mb-4"> {{-- Increased margin-bottom for better separation --}}
-                    <label for="asal_instansi" class="col-sm-2 col-form-label text-md-right">Unit/Instansi</label>
+                    <label for="asal_instansi" class="col-sm-2 col-form-label text-md-right">Unit</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control form-control-sm" id="asal_instansi" name="asal_instansi" value="{{ old('asal_instansi', $Pegawai->asal_instansi) }}" required> {{-- Added required for consistency --}}
                         @error('asal_instansi')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row mb-3">
+                    <label for="kategori" class="col-sm-2 col-form-label text-md-right">Perusahaan</label>
+                    <div class="col-sm-10">
+                        <select name="kategori" id="kategori" class="form-control form-control-sm">
+                            <option value="">-- Pilih Perusahaan --</option>
+                            @foreach($kategoriList as $key => $val)
+                                <option value="{{ $key }}" {{ old('kategori', isset($Pegawai) ? $Pegawai->kategori : '') == $key ? 'selected' : '' }}>
+                                    {{ $val }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('kategori')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>

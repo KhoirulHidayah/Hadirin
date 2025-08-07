@@ -11,7 +11,8 @@ use App\Http\Controllers\{
     SlideController,
     AuthController,
     ProfileController, 
-    UserController
+    UserController,
+    KategoriController
 };
 
 /*
@@ -85,7 +86,7 @@ Route::prefix('pegawai')->middleware('auth')->group(function () {
     Route::delete('/{id}', [PegawaiController::class, 'destroy']);
     Route::post('/import', [PegawaiController::class, 'import']);
     Route::get('/template/download', [PegawaiController::class, 'downloadTemplate'])->name('pegawai.template');
-    Route::get('/search', [PegawaiController::class, 'search']);
+    Route::get('/by-kategori/{kategori}', [PresenceDetailController::class, 'getPegawaiByKategori']);
 });
 
 // ========== SLIDE ==========
@@ -94,13 +95,16 @@ Route::prefix('slide')->middleware('auth')->group(function () {
     Route::post('/', [SlideController::class, 'store'])->name('slide.store');
     Route::delete('/{id}', [SlideController::class, 'destroy'])->name('slide.destroy');
     Route::put('/instagrams/update', [SlideController::class, 'updateInstagrams'])->name('instagrams.update');
+    Route::post('/instagrams/update-gallery-visibility', [SlideController::class, 'updateGalleryVisibility'])->name('instagrams.update-gallery-visibility');
+    Route::post('/instagrams/update-aspect-ratio', [SlideController::class, 'updateAspectRatio'])->name('instagrams.update-aspect-ratio');
 });
 
 // ========== LOGO FORMULIR ==========
 Route::prefix('logo_formulir')->middleware('auth')->group(function () {
     Route::get('/', [LogoFormulirController::class, 'edit'])->name('logo_formulir.edit');
     Route::put('/update', [LogoFormulirController::class, 'update'])->name('logo_formulir.update');
-    Route::delete('/delete/{posisi}', [LogoFormulirController::class, 'deleteLogo'])->name('logo_formulir.deleteLogo');
+    Route::delete('/logo-left', [LogoFormulirController::class, 'destroyLeft'])->name('logo_formulir.delete_left');
+    Route::delete('/logo-right', [LogoFormulirController::class, 'destroyRight'])->name('logo_formulir.delete_right');
 });
 
 // ========== USER ==========
@@ -113,5 +117,17 @@ Route::prefix('user')->middleware('auth')->group(function () {
     Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 });
 
+// ========== KATEGORI ==========
+Route::prefix('kategori')->middleware('auth')->group(function () {
+    Route::get('/', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::post('/list', [KategoriController::class, 'list'])->name('kategori.list');
+    Route::get('/create', [KategoriController::class, 'create'])->name('kategori.create');
+    Route::post('/', [KategoriController::class, 'store'])->name('kategori.store');
+    Route::get('/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+    Route::put('/{id}', [KategoriController::class, 'update'])->name('kategori.update');
+    Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+});
+
 // ========== PUBLIK ==========
-Route::get('absen/{slug}', [PresenceController::class, 'absenBySlug'])->name('absen.index');
+Route::get('absen/{presence_id}/{slug}', [PresenceController::class, 'absenBySlug'])->name('absen.index');
+

@@ -23,7 +23,7 @@
       height: 100vh;
       overflow-y: auto;
       flex-shrink: 0;
-      border-right: 5px solid #feda00;
+      border-right: 5px solid #FFEB00;
     }
 
     .nav-link {
@@ -43,7 +43,7 @@
     }
 
     .nav-link.active {
-      background-color: #feda00 !important;
+      background-color: #FFEB00 !important;
       color: #003366 !important;
       font-weight: bold;
     }
@@ -97,6 +97,13 @@
         </li>
 
         <li class="nav-header">Master Data</li>
+
+        <li class="nav-item">
+            <a href="{{ url('/kategori') }}" class="nav-link {{ ($activeMenu == 'kategori') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-building"></i> 
+                <p>Data Perusahaan</p>
+            </a>
+        </li>    
 
         <li class="nav-item">
           <a href="{{ url('/pegawai') }}" class="nav-link {{ ($activeMenu == 'pegawai') ? 'active' : '' }}">

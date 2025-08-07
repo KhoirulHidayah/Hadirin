@@ -8,7 +8,7 @@
 
   /* Tombol pushmenu (☰) warna kuning */
   .navbar .nav-link[data-widget="pushmenu"] {
-      color: #feda00 !important;
+      color: #FFEB00 !important;
       font-size: 1.2rem;
       font-weight: bold;
   }
@@ -43,7 +43,7 @@
 
   .dropdown-item:hover {
       background-color: #007BFF;
-      color: #feda00;
+      color: #FFEB00;
   }
 
   .dropdown-item i {
@@ -52,7 +52,7 @@
   }
 
   .dropdown-item:hover i {
-      color: #feda00;
+      color: #FFEB00;
   }
 </style>
 

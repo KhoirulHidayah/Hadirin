@@ -44,6 +44,43 @@
             @endif
         </div>
 
+        {{-- Form: Gallery Visibility Toggle (Moved to separate form for AJAX) --}}
+        <h6 class="text-primary mb-3"><i class="fas fa-eye mr-2"></i> Pengaturan Tampilan Galeri</h6>
+        <div class="mb-5 p-3 border rounded bg-light">
+            <form id="form-toggle-gallery">
+                @csrf
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="ps-3"> {{-- Tambahkan padding agar lebih dalam --}}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="show_gallery_toggle"
+                                    {{ old('show_gallery', $instagrams->show_gallery ?? 1) ? 'checked' : '' }}>
+                                <label class="form-check-label fw-bold" for="show_gallery_toggle">
+                                    Tampilkan Galeri Slide di Halaman Publik
+                                </label>
+                                <div class="form-text">
+                                    Centang untuk menampilkan galeri slide pada halaman publik, hapus centang untuk menyembunyikan.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Status indicator for gallery visibility --}}
+                <div id="gallery-status-indicator" class="mt-3 ps-3">
+                    @if($instagrams && $instagrams->show_gallery)
+                        <span class="badge bg-success fs-6 p-2">
+                            Galeri sedang ditampilkan
+                        </span>
+                    @else
+                        <span class="badge bg-warning text-dark fs-6 p-2">
+                            Galeri sedang disembunyikan
+                        </span>
+                    @endif
+                </div>
+            </form>
+        </div>
+
         <h6 class="text-primary mb-3"><i class="fas fa-cogs mr-2"></i> Pengaturan Umum</h6>
         {{-- Form: Update Logo & Instagram Username --}}
         <form action="{{ route('instagrams.update') }}" method="POST" enctype="multipart/form-data" class="mb-5 p-3 border rounded bg-light">
@@ -68,7 +105,8 @@
                     @error('instagram_username') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                 </div>
             </div>
-            <button type="submit" class="btn btn-success btn-sm mt-3"><i class="fas fa-save mr-1"></i> Update Pengaturan</button>
+            
+            <button type="submit" class="btn btn-primary btn-sm mt-3"><i class="fas fa-save mr-1"></i> Update Logo & Username</button>
         </form>
 
         <h6 class="text-primary mb-3"><i class="fas fa-plus-circle mr-2"></i> Tambah Gambar Slide Baru</h6>
@@ -84,6 +122,7 @@
         </form>
 
         <h6 class="text-primary mb-3"><i class="fas fa-th-list mr-2"></i> Daftar Gambar Slide</h6>
+        
         {{-- List of Images --}}
         <div class="row">
             @forelse($slides as $slide)
@@ -209,9 +248,113 @@
         text-overflow: ellipsis;
         max-width: 100%; /* Ensure truncation works */
     }
+
+    /* Toggle switch styling */
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .form-switch .form-check-input {
+        width: 2.5em;
+        height: 1.25em;
+    }
+    
+    /* Badge styling */
+    .badge.fs-6 {
+        font-size: 0.875rem !important;
+    }
 </style>
 @endpush
 
 @push('js')
-    {{-- No specific JS needed here beyond what Bootstrap/AdminLTE provides for alerts --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const showGalleryToggle = document.getElementById('show_gallery_toggle');
+        const galleryStatusIndicator = document.getElementById('gallery-status-indicator');
+
+        if (showGalleryToggle) {
+            showGalleryToggle.addEventListener('change', function () {
+                const isChecked = this.checked;
+                const value = isChecked ? 1 : 0;
+
+                // Send AJAX request
+                fetch('{{ route('instagrams.update-gallery-visibility') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ show_gallery: value })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the status indicator immediately
+                        if (isChecked) {
+                            galleryStatusIndicator.innerHTML = `
+                                <span class="badge bg-success fs-6 p-2">
+                                    <i class="fas fa-eye mr-1"></i> Galeri sedang ditampilkan
+                                </span>
+                            `;
+                        } else {
+                            galleryStatusIndicator.innerHTML = `
+                                <span class="badge bg-warning text-dark fs-6 p-2">
+                                    <i class="fas fa-eye-slash mr-1"></i> Galeri sedang disembunyikan
+                                </span>
+                            `;
+                        }
+                        // Optionally show a temporary success alert
+                        showTemporaryAlert('success', data.message);
+                    } else {
+                        // Revert toggle if update fails and show error
+                        this.checked = !isChecked; // Revert
+                        showTemporaryAlert('danger', data.message || 'Gagal memperbarui pengaturan galeri.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Revert toggle on network error
+                    this.checked = !isChecked; 
+                    showTemporaryAlert('danger', 'Terjadi kesalahan jaringan atau server.');
+                });
+            });
+        }
+
+        function showTemporaryAlert(type, message) {
+            const alertContainer = document.querySelector('.card-body .mb-4'); // Assuming this is the main alert container
+            
+            // Remove existing temporary alerts to avoid stacking
+            const existingAlerts = alertContainer.querySelectorAll('.temp-alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} d-flex align-items-center position-relative fade show temp-alert mt-3`;
+            alertDiv.setAttribute('role', 'alert');
+            
+            const iconClass = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+            
+            alertDiv.innerHTML = `
+                <i class="${iconClass} me-2 fa-lg"></i>
+                <div>${message}</div>
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Insert after the existing info alert, or at the beginning of the container
+            const infoAlert = alertContainer.querySelector('.alert-info');
+            if (infoAlert) {
+                infoAlert.after(alertDiv);
+            } else {
+                alertContainer.prepend(alertDiv);
+            }
+
+
+            // Automatically close the alert after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertDiv); // Use Bootstrap's JS for proper closing animation
+                bsAlert.close();
+            }, 5000);
+        }
+    });
+</script>
 @endpush

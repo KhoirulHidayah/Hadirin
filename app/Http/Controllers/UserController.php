@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -37,7 +38,6 @@ class UserController extends Controller
         $page = (object) [
             'title' => ''
         ];
-        $data = User::all();
         $activeMenu = 'user';
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
@@ -67,6 +67,7 @@ class UserController extends Controller
         User::create([
             'username' => $request->username,
             'email' => $request->email,
+            'email_verified_at' => Carbon::now(), // ← Diisi otomatis saat tambah
             'password' => bcrypt($request->password)
         ]);
 
@@ -87,7 +88,7 @@ class UserController extends Controller
         ];
         $activeMenu = 'user';
         return view('user.edit', [
-            'user' => $user, // ← INI WAJIB ADA
+            'user' => $user,
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
@@ -104,6 +105,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->username = $request->username;
         $user->email = $request->email;
+        $user->email_verified_at = Carbon::now(); // ← Diisi ulang saat update
 
         if ($request->filled('password')) {
             $user->password = bcrypt($request->password);

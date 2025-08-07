@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Instagram extends Model
 {
     use HasFactory;
-    protected $table = 'instagrams'; 
-    protected $fillable = ['logo', 'instagram_username'];
+
+    protected $fillable = [
+        'logo',
+        'instagram_username',
+        'show_gallery'
+    ];
+
+    // Cast untuk memastikan show_gallery selalu boolean
+    protected $casts = [
+        'show_gallery' => 'boolean'
+    ];
+
+    // Default values
+    protected $attributes = [
+        'show_gallery' => true
+    ];
 }

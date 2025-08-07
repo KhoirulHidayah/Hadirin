@@ -1,6 +1,6 @@
 @extends('layouts.template')
 
-{{-- Custom CSS untuk tampilan modern dan elegan --}}
+{{-- Custom CSS for a modern and elegant look --}}
 @push('css')
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 <style>
@@ -12,7 +12,7 @@
         /* Success, warning, danger can retain some distinctiveness but with a cooler tone */
         --success-gradient: linear-gradient(135deg, #28a745 0%, #218838 100%); /* Green for success */
         --warning-gradient: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); /* Yellow for warning */
-        --danger-gradient: linear-gradient(135deg, #dc3545 0%, #c82333 100%);   /* Red for danger */
+        --danger-gradient: linear-gradient(135deg, #dc3545 0%, #c82333 100%);    /* Red for danger */
         --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.15); /* Slightly darker shadow */
         --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.25); /* Darker hover shadow */
         --border-radius: 20px;
@@ -407,34 +407,34 @@
             </div>
         </div>
 
-        {{-- Kegiatan Aktif --}}
+        {{-- Total Perusahaan --}}
         <div class="col-lg-3 col-md-6 col-12">
             <div class="stats-card warning">
                 <div class="stats-content">
-                    <div class="stats-number">{{ $kegiatanAktif }}</div>
-                    <div class="stats-label">Kegiatan Aktif</div>
-                    <a href="{{ url('/presence') }}" class="stats-link">
+                    <div class="stats-number">{{ $totalKategori }}</div>
+                    <div class="stats-label">Total Perusahaan</div>
+                    <a href="{{ url('/kategori') }}" class="stats-link">
                         <span>Lihat Detail</span>
                         <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
                 <div class="stats-icon">
-                    <i class="fas fa-play-circle"></i>
+                    <i class="fas fa-building"></i>
                 </div>
             </div>
         </div>
 
-        {{-- Rata-rata Kehadiran --}}
+        {{-- Rata-rata Kehadiran dalam Persen --}}
         <div class="col-lg-3 col-md-6 col-12">
             <div class="stats-card danger">
                 <div class="stats-content">
                     <div class="stats-number">
-                        {{ $rataRataKehadiran }} <span style="font-size: 1rem; font-weight: 600;">org</span>
+                        {{ number_format($rataRataKehadiran, 1) }}<span style="font-size: 1.0rem; font-weight: 600;">%</span>
                     </div>
                     <div class="stats-label">Rata-rata Kehadiran</div>
                     <div class="stats-link" style="cursor: default; color: #94a3b8;">
-                        <span>Per kegiatan selesai</span>
-                        <i class="fas fa-info-circle"></i>
+                        <span>Tingkat partisipasi</span>
+                        <i class="fas fa-percentage"></i>
                     </div>
                 </div>
                 <div class="stats-icon">
@@ -573,12 +573,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Data dari Controller
+        // Data from Controller
         const labels = @json($chartLabels);
         const data = @json($chartData);
         const ctx = document.getElementById('attendanceChart').getContext('2d');
 
-        // Modern gradient untuk chart (matching primary-gradient)
+        // Modern gradient for chart (matching primary-gradient)
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(0, 51, 102, 0.8)'); /* Darker blue */
         gradient.addColorStop(0.5, 'rgba(0, 34, 68, 0.6)');  /* Even darker blue */
@@ -588,7 +588,7 @@
         borderGradient.addColorStop(0, '#003366'); /* Darker blue */
         borderGradient.addColorStop(1, '#002244'); /* Even darker blue */
 
-        // Konfigurasi Chart Modern
+        // Modern Chart Configuration
         const chartConfig = {
             type: 'bar',
             data: {
@@ -677,13 +677,13 @@
             }
         };
 
-        // Render Chart dengan animasi
+        // Render Chart with animation
         new Chart(ctx, chartConfig);
 
         // --- Calendar Initialization ---
         const calendarEl = document.getElementById('calendar');
         const calendar = new FullCalendar.Calendar(calendarEl, {
-            locale: 'id', // Set bahasa ke Indonesia
+            locale: 'id', // Set language to Indonesian
             initialView: 'dayGridMonth',
             headerToolbar: {
                 left: 'prev,next today',
@@ -696,14 +696,14 @@
                 week: 'Minggu',
                 list: 'Daftar'
             },
-            events: @json($calendarEvents), // Memuat data dari controller
+            events: @json($calendarEvents), // Load data from controller
             eventClick: function(info) {
-                info.jsEvent.preventDefault(); // Mencegah browser mengikuti link
+                info.jsEvent.preventDefault(); // Prevent browser from following the link
                 if (info.event.url) {
-                    window.location.href = info.event.url; // Buka link di tab yang sama
+                    window.location.href = info.event.url; // Open link in the same tab
                 }
             },
-            eventColor: '#003366' // Menyamakan warna acara dengan tema
+            eventColor: '#003366' // Match event color with theme
         });
         calendar.render();
     });
