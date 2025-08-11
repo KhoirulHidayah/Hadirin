@@ -170,7 +170,7 @@
                                 <div class="mt-3 p-2 bg-warning text-dark rounded">
                                     <small>
                                         <i class="fas fa-exclamation-triangle mr-1"></i>
-                                        <strong>Penting:</strong> Pastikan kolom "Perusahaan" berisi nama perusahaan yang sudah ada di database.
+                                        <strong>Penting:</strong> Pastikan kolom "Perusahaan" berisi nama perusahaan yang sudah ada di Data Perusahaan.
                                     </small>
                                 </div>
                             </div>

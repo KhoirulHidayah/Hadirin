@@ -106,11 +106,20 @@
         </li>    
 
         <li class="nav-item">
+          <a href="{{ url('/asal_instansi') }}" class="nav-link {{ ($activeMenu == 'asal_instansi') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-user-tie"></i>
+            <p>Data Unit</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a href="{{ url('/pegawai') }}" class="nav-link {{ ($activeMenu == 'pegawai') ? 'active' : '' }}">
             <i class="nav-icon fas fa-user-tie"></i>
             <p>Data Pegawai</p>
           </a>
         </li>
+
+        <li class="nav-header">JADWAL</li>
 
         <li class="nav-item">
           <a href="{{ url('/presence') }}" class="nav-link {{ ($activeMenu == 'presence') ? 'active' : '' }}">
@@ -123,8 +132,8 @@
 
         <li class="nav-item">
           <a href="{{ url('/logo_formulir') }}" class="nav-link {{ ($activeMenu == 'logo_formulir') ? 'active' : '' }}">
-            <i class="nav-icon fas fa-image"></i>
-            <p>Title dan Logo Header</p>
+            <i class="nav-icon fas fa-window-maximize"></i> 
+            <p>Pengaturan Header</p>
           </a>
         </li>
 

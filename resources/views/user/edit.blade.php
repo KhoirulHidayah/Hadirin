@@ -48,7 +48,7 @@
                     <label for="password" class="col-sm-2 col-form-label text-md-right">Password</label>
                     <div class="col-sm-10">
                         <div class="input-group input-group-sm">
-                            <input type="password" class="form-control password-input" name="password" placeholder="Kosongkan jika tidak diubah">
+                            <input type="password" class="form-control password-input" name="password" placeholder="Kosongkan jika tidak diubah | Minimal 8 karakter">
                             <button class="btn btn-outline-secondary toggle-password-btn" type="button">
                                 <i class="fas fa-eye"></i>
                             </button>

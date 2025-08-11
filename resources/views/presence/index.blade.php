@@ -70,10 +70,7 @@
                         <th>Kode Kegiatan</th>
                         <th>Nama Kegiatan</th>
                         <th>Tempat</th>
-                        <th>Slug</th>
                         <th>Tanggal Kegiatan</th>
-                        <th>Waktu Mulai</th>
-                        <th>Waktu Selesai</th>
                         <th>Status</th>
                         <th>Opsi</th>
                     </tr>
@@ -126,6 +123,11 @@
         vertical-align: middle !important;
         white-space: nowrap;
         border: 1px solid #e9ecef; /* Lighter border for cells */
+    }
+
+    /* Mengizinkan wrap untuk kolom Nama Kegiatan */
+    table#presences td:nth-child(3) {
+        white-space: normal;
     }
 
     table#presences th {
@@ -212,22 +214,19 @@ $(document).ready(function () {
             { data: 'presence_id', name: 'presence_id' },
             { data: 'nama_kegiatan', name: 'nama_kegiatan' },
             { data: 'tempat', name: 'tempat' },
-            { data: 'slug', name: 'slug' },
             { data: 'tgl_kegiatan', name: 'tgl_kegiatan' },
-            { data: 'waktu_mulai', name: 'waktu_mulai' },
-            { data: 'waktu_selesai', name: 'waktu_selesai' },
             { data: 'status', name: 'status' },
             { data: 'aksi', name: 'aksi', orderable: false, searchable: false, className: "text-center" }
         ],
         // Menambahkan urutan default pada kolom status dan tanggal
         order: [
-            [8, 'desc'], // Kolom status (index 8), diurutkan secara menurun (aktif di atas)
-            [5, 'asc'] // Kolom tanggal (index 5), diurutkan secara menaik (tanggal terkecil)
+            [5, 'desc'], // Kolom status (index 5)
+            [4, 'asc'] // Kolom tanggal (index 4)
         ]
     });
 
     // Reload saat dropdown bulan diubah
-    $('#filter-bulan,  #filter-tahun').on('change', function () {
+    $('#filter-bulan,  #filter-tahun').on('change', function () {
         presenceTable.ajax.reload();
     })
 

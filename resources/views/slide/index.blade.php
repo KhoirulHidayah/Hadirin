@@ -87,6 +87,7 @@
             @csrf
             @method('PUT')
             <div class="row">
+                {{-- Kolom untuk Upload Logo Baru, mengambil 12 kolom pada layar kecil dan 6 kolom pada layar medium --}}
                 <div class="col-md-6 mb-3">
                     <label for="logo" class="form-label font-weight-bold">Upload Logo Baru</label>
                     <input type="file" name="logo" id="logo" class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.webp">
@@ -98,15 +99,27 @@
                     @endif
                     @error('logo') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="instagram_username" class="form-label font-weight-bold">Username Instagram</label>
-                    <input type="text" name="instagram_username" id="instagram_username" class="form-control form-control-sm"
-                        value="{{ old('instagram_username', $instagrams->instagram_username ?? '') }}" placeholder="@username_anda">
-                    @error('instagram_username') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                
+                {{-- Kolom untuk Username Instagram, sejajar dengan Website URL --}}
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="instagram_username" class="form-label font-weight-bold">Username Instagram</label>
+                            <input type="text" name="instagram_username" id="instagram_username" class="form-control form-control-sm"
+                                value="{{ old('instagram_username', $instagrams->instagram_username ?? '') }}" placeholder="username_anda">
+                            @error('instagram_username') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+                        {{-- Kolom untuk Website URL, sejajar dengan Username Instagram --}}
+                        <div class="col-12 mb-3">
+                            <label for="website_url" class="form-label font-weight-bold">Website URL</label>
+                            <input type="url" name="website_url" id="website_url" class="form-control form-control-sm"
+                                value="{{ old('website_url', $instagrams->website_url ?? '') }}" placeholder="contoh: https://www.pln.co.id">
+                            @error('website_url') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <button type="submit" class="btn btn-primary btn-sm mt-3"><i class="fas fa-save mr-1"></i> Update Logo & Username</button>
+            <button type="submit" class="btn btn-primary btn-sm mt-3"><i class="fas fa-save mr-1"></i> Update Pengaturan</button>
         </form>
 
         <h6 class="text-primary mb-3"><i class="fas fa-plus-circle mr-2"></i> Tambah Gambar Slide Baru</h6>
@@ -122,7 +135,7 @@
         </form>
 
         <h6 class="text-primary mb-3"><i class="fas fa-th-list mr-2"></i> Daftar Gambar Slide</h6>
-        
+
         {{-- List of Images --}}
         <div class="row">
             @forelse($slides as $slide)
@@ -155,6 +168,7 @@
 </div>
 @endsection
 
+{{-- Pindahkan ig-info ke dalam card-body setelah konten utama --}}
 @push('css')
 <style>
     /* Global styles for consistency (from previous responses) */
@@ -254,15 +268,46 @@
         background-color: #28a745;
         border-color: #28a745;
     }
-    
+
     .form-switch .form-check-input {
         width: 2.5em;
         height: 1.25em;
     }
-    
+
     /* Badge styling */
     .badge.fs-6 {
         font-size: 0.875rem !important;
+    }
+
+    .ig-info {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* Jarak antara ig-info dan website */
+        margin-top: 15px; /* Sesuaikan margin atas jika perlu */
+    }
+
+    .ig-info .logo-wrapper {
+        display: inline-block;
+    }
+
+    .ig-info img {
+        height: 30px;
+        width: auto;
+    }
+
+    .ig-info .instagram-link, .ig-info .website-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #000;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+
+    .ig-info .instagram-link img, .ig-info .website-link img {
+        height: 20px;
+        width: 20px;
+        margin-right: 8px;
     }
 </style>
 @endpush
@@ -315,7 +360,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     // Revert toggle on network error
-                    this.checked = !isChecked; 
+                    this.checked = !isChecked;
                     showTemporaryAlert('danger', 'Terjadi kesalahan jaringan atau server.');
                 });
             });
@@ -323,7 +368,7 @@
 
         function showTemporaryAlert(type, message) {
             const alertContainer = document.querySelector('.card-body .mb-4'); // Assuming this is the main alert container
-            
+
             // Remove existing temporary alerts to avoid stacking
             const existingAlerts = alertContainer.querySelectorAll('.temp-alert');
             existingAlerts.forEach(alert => alert.remove());
@@ -331,15 +376,15 @@
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} d-flex align-items-center position-relative fade show temp-alert mt-3`;
             alertDiv.setAttribute('role', 'alert');
-            
+
             const iconClass = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
-            
+
             alertDiv.innerHTML = `
                 <i class="${iconClass} me-2 fa-lg"></i>
                 <div>${message}</div>
                 <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-dismiss="alert" aria-label="Close"></button>
             `;
-            
+
             // Insert after the existing info alert, or at the beginning of the container
             const infoAlert = alertContainer.querySelector('.alert-info');
             if (infoAlert) {

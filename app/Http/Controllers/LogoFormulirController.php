@@ -11,8 +11,8 @@ class LogoFormulirController extends Controller
     public function edit()
     {
         $breadcrumb = (object) [
-            'title' => 'Data Tittle dan Logo',
-            'list'  => ['Home', 'Data Tittle dan Logo']
+            'title' => 'Data Header',
+            'list'  => ['Home', 'Data Header']
         ];
         $page = (object) [
             'title' => ''

@@ -12,7 +12,8 @@ use App\Http\Controllers\{
     AuthController,
     ProfileController, 
     UserController,
-    KategoriController
+    KategoriController,
+    AsalInstansiController
 };
 
 /*
@@ -128,6 +129,16 @@ Route::prefix('kategori')->middleware('auth')->group(function () {
     Route::delete('/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 });
 
+// ========== ASAL INSTANSI ==========
+Route::prefix('asal_instansi')->middleware('auth')->group(function () {
+    Route::get('/', [AsalInstansiController::class, 'index'])->name('asal_instansi.index');
+    Route::post('/list', [AsalInstansiController::class, 'list'])->name('asal_instansi.list');
+    Route::get('/create', [AsalInstansiController::class, 'create'])->name('asal_instansi.create');
+    Route::post('/', [AsalInstansiController::class, 'store'])->name('asal_instansi.store');
+    Route::get('/{asalInstansi}/edit', [AsalInstansiController::class, 'edit'])->name('asal_instansi.edit');
+    Route::put('/{asalInstansi}', [AsalInstansiController::class, 'update'])->name('asal_instansi.update');
+    Route::delete('/{asalInstansi}', [AsalInstansiController::class, 'destroy'])->name('asal_instansi.destroy');
+});
 // ========== PUBLIK ==========
 Route::get('absen/{presence_id}/{slug}', [PresenceController::class, 'absenBySlug'])->name('absen.index');
 

@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/Instagram.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +14,7 @@ class Instagram extends Model
     protected $fillable = [
         'logo',
         'instagram_username',
+        'website_url', // Tambahkan ini
         'show_gallery'
     ];
 

@@ -115,6 +115,9 @@ class KategoriController extends Controller
         \App\Models\Pegawai::where('kategori', $namaLama)
             ->update(['kategori' => $namaBaru]);
 
+        // Update semua pegawai yang sebelumnya pakai nama perusahaan lama
+        \App\Models\AsalInstansi::where('kategori_nama', $namaLama)
+            ->update(['kategori_nama' => $namaBaru]);
         return redirect()->route('kategori.index')->with('success', 'Perusahaan dan data pegawai terkait berhasil diperbarui.');
     }
 

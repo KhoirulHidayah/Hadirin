@@ -267,7 +267,7 @@
             background-color: rgba(0, 0, 0, 0.8);
         }
 
-        /* UPDATED: Instagram Info - Centered with vertical layout */
+        /* UPDATED: Instagram Info - Horizontal Layout */
         .ig-info {
             background-color: rgba(255, 255, 255, 0.541);
             border-top-left-radius: 0;
@@ -275,34 +275,60 @@
             padding: 0.75rem 1.25rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             display: flex;
-            flex-direction: column; /* This will stack items vertically */
-            align-items: center; /* Center items horizontally */
+            flex-direction: row;
+            align-items: center;
             justify-content: center;
-            gap: 8px; /* Space between logo and link */
+            gap: 8px; /* Space between logo and links */
         }
 
-        .ig-info img {
-            height: 80px;
+        /* Base style for the main logo */
+        .ig-info .logo-wrapper img {
+            height: 60px;
             border-radius: 6px;
         }
 
-        .ig-info a.instagram-link {
+        /* CSS for Instagram Link */
+        .ig-info .instagram-link {
             font-weight: 600;
-            color: #007bff;
+            color: #333; /* Warna font diubah menjadi hitam */
             transition: color 0.3s ease;
             font-size: 0.95rem;
-            text-decoration: none; /* Remove underline */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
         }
 
-        .ig-info a.instagram-link:hover {
-            color: #0056b3;
+        .ig-info .instagram-link:hover {
+            color: #000; /* Warna lebih gelap saat di-hover */
         }
 
-        .ig-info a.instagram-link img {
+        .ig-info .instagram-link img {
             width: 14px;
             height: 14px;
             margin-right: 5px;
-            border-radius: 0px; /* Mengurangi border radius agar sudut tidak terlalu melengkung */
+            border-radius: 0;
+        }
+
+        /* CSS for Website Link */
+        .ig-info .website-link {
+            font-weight: 600;
+            color: #333; /* Warna font diubah menjadi hitam */
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .ig-info .website-link:hover {
+            color: #000; /* Warna lebih gelap saat di-hover */
+        }
+
+        .ig-info .website-link img {
+            width: 14px;
+            height: 14px;
+            margin-right: 5px;
+            border-radius: 0;
         }
 
         /* DataTables Styling - Compact Version */
@@ -720,7 +746,7 @@
                         </div>
                     </div>
                      {{-- UPDATE: Letakkan ig-info setelah card-body --}}
-                    @if($instagrams && ($instagrams->logo || $instagrams->instagram_username))
+                    @if($instagrams && ($instagrams->logo || $instagrams->instagram_username || $instagrams->website_url))
                         <div class="ig-info">
                             {{-- Update: Struktur HTML untuk menempatkan logo di atas --}}
                             @if($instagrams && $instagrams->logo)
@@ -733,7 +759,16 @@
                                 <a href="https://instagram.com/{{ $instagrams->instagram_username }}" target="_blank"
                                 class="instagram-link d-flex align-items-center">
                                     <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram Icon">
-                                    <span>{{ '@' . $instagrams->instagram_username }}</span>
+                                    <span>{{$instagrams->instagram_username }}</span>
+                                </a>
+                            @endif
+
+                            {{-- Tampilkan Website URL --}}
+                            @if($instagrams->website_url)
+                                <a href="{{ $instagrams->website_url }}" target="_blank"
+                                class="website-link d-flex align-items-center text-decoration-none text-dark">
+                                <img src="https://cdn-icons-png.flaticon.com/32/14036/14036081.png" alt="Website Icon" style="height: 20px; margin-right: 5px;">
+                                    <span>{{ parse_url($instagrams->website_url, PHP_URL_HOST) }}</span>
                                 </a>
                             @endif
                         </div>

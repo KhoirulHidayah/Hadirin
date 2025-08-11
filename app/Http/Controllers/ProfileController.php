@@ -32,7 +32,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'username' => 'required|string|max:255',
+            'username' => 'required|string|min:6|max:50', // Diperbarui: minimal 6 karakter
             'email' => 'required|email|unique:users,email,' . Auth::id(),
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -74,7 +74,7 @@ class ProfileController extends Controller
 
         // Validasi password baru
         $request->validate([
-            'password' => 'required|min:6|confirmed',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         // Update password

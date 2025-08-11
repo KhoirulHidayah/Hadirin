@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/SlideController.php
 
 namespace App\Http\Controllers;
 
@@ -6,7 +7,7 @@ use App\Models\Instagram;
 use App\Models\Slide;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log; // Added for logging
+use Illuminate\Support\Facades\Log;
 
 class SlideController extends Controller
 {
@@ -54,17 +55,15 @@ class SlideController extends Controller
         $request->validate([
             'logo' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
             'instagram_username' => 'nullable|string|max:255',
-            // 'show_gallery' is now handled by updateGalleryVisibility
+            'website_url' => 'nullable|url|max:255', // Tambahkan ini
         ]);
 
         $instagrams = Instagram::firstOrNew([]);
 
-        // Upload logo baru
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $path = $file->store('public/gallery');
 
-            // Hapus logo lama jika ada
             if ($instagrams->logo) {
                 Storage::delete('public/' . $instagrams->logo);
             }
@@ -72,12 +71,11 @@ class SlideController extends Controller
             $instagrams->logo = str_replace('public/', '', $path);
         }
 
-        // Simpan Instagram username
         $instagrams->instagram_username = $request->instagram_username;
-        // Do NOT update show_gallery here, as it's now handled by the AJAX method.
+        $instagrams->website_url = $request->website_url; // Tambahkan ini
         $instagrams->save();
 
-        return back()->with('success', 'Pengaturan logo dan username Instagram berhasil diperbarui.');
+        return back()->with('success', 'Pengaturan logo, username Instagram, dan website berhasil diperbarui.');
     }
 
     /**

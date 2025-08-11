@@ -44,7 +44,9 @@
 
             {{-- APP NAME --}}
             <div class="form-group mb-3">
-                <label for="app_name" class="form-label font-weight-bold">Nama Aplikasi (APP_NAME)</label>
+                <label for="app_name" class="form-label font-weight-bold">
+                    <i class="fas fa-laptop-code mr-2"></i> Nama Aplikasi (APP_NAME)
+                </label>
                 <input type="text" class="form-control form-control-sm" id="app_name" name="app_name"
                        value="{{ old('app_name', $logoFormulir->app_name ?? '') }}" placeholder="Masukkan nama aplikasi">
                 @error('app_name') <small class="text-danger">{{ $message }}</small> @enderror
@@ -52,40 +54,54 @@
 
             {{-- HEADER TITLE --}}
             <div class="form-group mb-3">
-                <label for="header_title" class="form-label font-weight-bold">Judul Header</label>
+                <label for="header_title" class="form-label font-weight-bold">
+                    <i class="fas fa-heading mr-2"></i> Judul Header
+                </label>
                 <input type="text" class="form-control form-control-sm" id="header_title" name="header_title"
                        value="{{ old('header_title', $logoFormulir->header_title ?? '') }}" placeholder="Masukkan judul header">
                 @error('header_title') <small class="text-danger">{{ $message }}</small> @enderror
             </div>
 
-            {{-- LOGO KIRI --}}
-            <div class="form-group mb-3">
-                <label for="logo_left" class="form-label font-weight-bold">Logo Kiri</label><br>
-                @if (!empty($logoFormulir->logo_left))
-                    <div class="mb-2 text-muted small">Logo Saat Ini:</div>
-                    <img src="{{ asset('storage/' . $logoFormulir->logo_left) }}" alt="Logo Kiri"
-                         class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
-                @else
-                    <div class="mb-2 text-muted small">Belum ada logo kiri terupload.</div>
-                @endif
-                <input class="form-control form-control-sm" type="file" id="logo_left" name="logo_left" accept="image/*">
-                <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
-                @error('logo_left') <small class="text-danger">{{ $message }}</small> @enderror
-            </div>
+            {{-- LOGO KIRI & KANAN (DISEJAJARKAN) --}}
+            {{-- Menggunakan row dan col untuk menempatkan logo secara sejajar --}}
+            <div class="row">
+                {{-- LOGO KIRI --}}
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="logo_left" class="form-label font-weight-bold">
+                            <i class="fas fa-file-image mr-2"></i> Logo Kiri
+                        </label><br>
+                        @if (!empty($logoFormulir->logo_left))
+                            <div class="mb-2 text-muted small">Logo Saat Ini:</div>
+                            <img src="{{ asset('storage/' . $logoFormulir->logo_left) }}" alt="Logo Kiri"
+                                 class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
+                        @else
+                            <div class="mb-2 text-muted small">Belum ada logo kiri terupload.</div>
+                        @endif
+                        <input class="form-control form-control-sm" type="file" id="logo_left" name="logo_left" accept="image/*">
+                        <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
+                        @error('logo_left') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
+                </div>
 
-            {{-- LOGO KANAN --}}
-            <div class="form-group mb-3">
-                <label for="logo_right" class="form-label font-weight-bold">Logo Kanan</label><br>
-                @if (!empty($logoFormulir->logo_right))
-                    <div class="mb-2 text-muted small">Logo Saat Ini:</div>
-                    <img src="{{ asset('storage/' . $logoFormulir->logo_right) }}" alt="Logo Kanan"
-                         class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
-                @else
-                    <div class="mb-2 text-muted small">Belum ada logo kanan terupload.</div>
-                @endif
-                <input class="form-control form-control-sm" type="file" id="logo_right" name="logo_right" accept="image/*">
-                <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
-                @error('logo_right') <small class="text-danger">{{ $message }}</small> @enderror
+                {{-- LOGO KANAN --}}
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="logo_right" class="form-label font-weight-bold">
+                            <i class="fas fa-file-image mr-2"></i> Logo Kanan
+                        </label><br>
+                        @if (!empty($logoFormulir->logo_right))
+                            <div class="mb-2 text-muted small">Logo Saat Ini:</div>
+                            <img src="{{ asset('storage/' . $logoFormulir->logo_right) }}" alt="Logo Kanan"
+                                 class="img-thumbnail mb-2" style="max-height: 100px; width: auto; object-fit: contain;">
+                        @else
+                            <div class="mb-2 text-muted small">Belum ada logo kanan terupload.</div>
+                        @endif
+                        <input class="form-control form-control-sm" type="file" id="logo_right" name="logo_right" accept="image/*">
+                        <small class="form-text text-muted">Format: JPG, PNG, WEBP. Maks: 2MB.</small>
+                        @error('logo_right') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
+                </div>
             </div>
 
             {{-- BUTTON UPDATE --}}
@@ -96,31 +112,31 @@
             </div>
         </form>
 
-        {{-- === FORM DELETE LOGO KIRI === --}}
-        @if (!empty($logoFormulir->logo_left))
-            <div class="mt-4 border-top pt-3">
-                <form action="{{ route('logo_formulir.delete_left') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kiri?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kiri
-                    </button>
-                </form>
+        {{-- === FORM DELETE LOGO === --}}
+        <div class="mt-4 border-top pt-3">
+            <label class="form-label font-weight-bold">Hapus jika tidak ingin menampilkan</label>
+            {{-- Menggunakan d-flex untuk menempatkan tombol hapus secara sejajar --}}
+            <div class="d-flex gap-2">
+                @if (!empty($logoFormulir->logo_left))
+                    <form action="{{ route('logo_formulir.delete_left') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kiri?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kiri
+                        </button>
+                    </form>
+                @endif
+                @if (!empty($logoFormulir->logo_right))
+                    <form action="{{ route('logo_formulir.delete_right') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kanan?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kanan
+                        </button>
+                    </form>
+                @endif
             </div>
-        @endif
-
-        {{-- === FORM DELETE LOGO KANAN === --}}
-        @if (!empty($logoFormulir->logo_right))
-            <div class="mt-3">
-                <form action="{{ route('logo_formulir.delete_right') }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus logo kanan?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash-alt mr-1"></i> Hapus Logo Kanan
-                    </button>
-                </form>
-            </div>
-        @endif
+        </div>
     </div>
 </div>
 @endsection
@@ -152,7 +168,7 @@
     /* Form specific styles */
     .form-label {
         font-size: 0.9rem; /* Slightly larger font for labels */
-        color: #343a40; /* Darker text for labels */
+        color: black; /* Diperbarui: Warna teks label menjadi hitam */
     }
 
     .form-control-sm {
@@ -212,6 +228,10 @@
     }
     .alert-danger .fas {
         color: inherit;
+    }
+    /* Add some spacing for the delete buttons */
+    .gap-2 > * {
+        margin-right: 0.5rem;
     }
 </style>
 @endpush
